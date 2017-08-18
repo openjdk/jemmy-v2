@@ -23,10 +23,14 @@
  -->
 <project name="jemmy" default="compile" basedir=".">
     <property name="src.dir" location="src"/>
+    <property name="test.dir" location="test"/>
     <property name="build.dir" location="build"/>
     <property name="build.classes.dir" location="${build.dir}/classes"/>
+    <property name="build.test.dir" location="${build.dir}/test"/>
     <property name="dist.jar" location="${build.dir}/jemmy.jar"/>
-
+    <property name="test.list" location="${build.dir}/testlist"/>
+    <property name="test.workdir" location="${build.dir}/test_wd"/>
+    <property name="test.report" location="${build.dir}/test_report"/>
     <target name="timestamp" unless="buildnumber">
         <tstamp>
             <format property="buildnumber" pattern="yyyyMMdd"/>
@@ -39,8 +43,35 @@
         <filter token="BUILD_NUMBER" value="${buildnumber}"/>
         <copy file="${src.dir}/org/netbeans/jemmy/version_info" tofile="${build.classes.dir}/org/netbeans/jemmy/version_info" filtering="on"/>
     </target>
+    <target name="compile-test" depends="compile">
+        <mkdir dir="${build.test.dir}"/>
+        <javac srcdir="${test.dir}" destdir="${build.test.dir}" debug="on" includeantruntime="false"
+               classpath="${build.classes.dir}:${jtreg.home}/lib/testng.jar"/>
+    </target>
+    <target name="find-tests" unless="tests">
+        <fileset id="testset" dir="${test.dir}">
+            <include name="**/*Test.java" />
+        </fileset>
+        <pathconvert pathsep="${line.separator}" property="testlist" refid="testset">
+            <globmapper from="${test.dir}/*" to="*"/>
+        </pathconvert>
+        <echo file="${test.list}">${testlist}</echo>
+        <property name="tests" value="@${test.list}"/>
+    </target>
+    <target name="test" depends="compile-test,find-tests">
+        <exec executable="${jtreg.home}/bin/jtreg">
+            <arg value="-cpa:${build.classes.dir}"/>
+            <arg value="-w:${test.workdir}"/>
+            <arg value="-r:${test.report}"/>
+            <arg value="-conc:1"/>
+            <arg value="-ovm"/>
+            <arg value="-v:default"/>
+            <arg value="-dir:test"/>
+            <arg value="${tests}"/>
+        </exec>
+    </target>
     <target name="jar" depends="compile">
-        <mkdir dir="${dist.dir}"/>
+        <mkdir dir="${build.dir}"/>
         <jar jarfile="${dist.jar}" basedir="${build.classes.dir}" manifest="${build.classes.dir}/org/netbeans/jemmy/version_info"/>
     </target>
     <target name="version" depends="compile">
