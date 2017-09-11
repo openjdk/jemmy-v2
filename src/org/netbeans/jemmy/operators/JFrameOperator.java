@@ -103,7 +103,9 @@ public class JFrameOperator extends FrameOperator {
      *
      */
     public JFrameOperator(String title, int index, Operator env) {
-        this(new FrameByTitleFinder(title, env.getComparator()), index, env);
+        this(new JFrameFinder(new FrameByTitleFinder(title,
+                env.getComparator())),
+                index, env);
     }
 
     /**

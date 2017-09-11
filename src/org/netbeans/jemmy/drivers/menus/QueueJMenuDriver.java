@@ -132,10 +132,9 @@ public class QueueJMenuDriver extends LightSupportiveDriver implements MenuDrive
                 }
             };
         }
-        System.err.println("QueueJMenuDriver WORKAROUND 2");
         queueTool.waitEmpty(10);
         queueTool.waitEmpty(10);
-//        queueTool.waitEmpty(10);
+        queueTool.waitEmpty(10);
         result = runAction(action, oper,
                 oper.getTimeouts().getTimeout("ComponentOperator.WaitComponentTimeout"),
                 (chooser instanceof DescriptablePathChooser)

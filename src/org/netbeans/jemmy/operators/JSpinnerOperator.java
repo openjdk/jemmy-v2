@@ -28,7 +28,6 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Objects;
 
 import javax.swing.JComponent;
 import javax.swing.JSpinner;
@@ -967,7 +966,7 @@ public class JSpinnerOperator extends JComponentOperator
 
     /**
      * Abstract class for a scrolling of a spinner having unknown model type. A
-     * subclass needs to override {@code equals(Object)} value to specify a
+     * subclass needs to override {@code reached(Object)} method to specify a
      * criteria of successful scrolling.
      */
     public abstract static class ObjectScrollAdjuster implements ScrollAdjuster {
@@ -989,7 +988,7 @@ public class JSpinnerOperator extends JComponentOperator
 
         @Override
         public int getScrollDirection() {
-            if (equals(model.getValue())) {
+            if (reached(model.getValue())) {
                 return ScrollAdjuster.DO_NOT_TOUCH_SCROLL_DIRECTION;
             } else if (direction == ScrollAdjuster.INCREASE_SCROLL_DIRECTION
                     && model.getNextValue() != null
@@ -1001,7 +1000,7 @@ public class JSpinnerOperator extends JComponentOperator
             }
         }
 
-        public abstract boolean equals(Object curvalue);
+        public abstract boolean reached(Object curvalue);
 
         @Override
         public int getScrollOrientation() {
@@ -1029,15 +1028,9 @@ public class JSpinnerOperator extends JComponentOperator
             this.obj = obj;
         }
 
-        public boolean equals(Object curvalue) {
-            return curvalue != null && curvalue.equals(obj);
-        }
-
         @Override
-        public int hashCode() {
-            int hash = 7;
-            hash = 79 * hash + Objects.hashCode(this.obj);
-            return hash;
+        public boolean reached(Object curvalue) {
+            return curvalue != null && curvalue.equals(obj);
         }
 
         @Override
@@ -1093,18 +1086,9 @@ public class JSpinnerOperator extends JComponentOperator
             this(oper, pattern, oper.getComparator(), direction);
         }
 
-        public boolean equals(Object curvalue) {
-
-            // TODO: This abuses the semantics of Object.equals()
-            return curvalue != null && comparator.equals(curvalue.toString(), pattern);
-        }
-
         @Override
-        public int hashCode() {
-            int hash = 7;
-            hash = 97 * hash + Objects.hashCode(this.pattern);
-            hash = 97 * hash + Objects.hashCode(this.comparator);
-            return hash;
+        public boolean reached(Object curvalue) {
+            return curvalue != null && comparator.equals(curvalue.toString(), pattern);
         }
 
         @Override
