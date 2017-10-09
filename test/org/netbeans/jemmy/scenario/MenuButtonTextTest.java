@@ -95,7 +95,7 @@ public class MenuButtonTextTest {
     }
 
     @Test
-    public void testRadioMenu() {
+    public void testRadioMenu() throws InterruptedException {
         JMenuItemOperator radioItem = mbo.showMenuItem("menu0|submenu|radio");
 
         JRadioButtonMenuItemOperator radio =
@@ -110,6 +110,7 @@ public class MenuButtonTextTest {
 
         assertFalse(radio.isSelected(), "Radio should not be selected");
 
+        Thread.sleep(100); //CODETOOLS-7902051
         mbo.pushMenu("menu0|submenu|radio");
 
         assertTrue(radio.isSelected(), "Radio should be selected");
