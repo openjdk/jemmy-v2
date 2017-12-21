@@ -1289,6 +1289,18 @@ public class JTableOperator extends JComponentOperator
     }
 
     /**
+     * Maps {@code JTable.changeSelection(int, int, boolean, boolean)} through queue
+     */
+    public void changeSelection(int rowIndex, int columnIndex, boolean toggle, boolean extend) {
+        runMapping(new MapVoidAction("clearSelection") {
+            @Override
+            public void map() {
+                ((JTable) getSource()).changeSelection(rowIndex, columnIndex, toggle, extend);
+            }
+        });
+    }
+
+    /**
      * Maps {@code JTable.clearSelection()} through queue
      */
     public void clearSelection() {
