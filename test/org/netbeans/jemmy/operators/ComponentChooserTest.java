@@ -20,37 +20,33 @@
  * or visit www.oracle.com if you need additional information or have any
  * questions.
  */
-package org.netbeans.jemmy;
+package org.netbeans.jemmy.operators;
+
+import static org.testng.Assert.assertEquals;
 
 import java.awt.Component;
 
-/**
- *
- * This interface should be implemented to define the criteria used to search
- * for a component.
- *
- * @see org.netbeans.jemmy.ComponentSearcher
- * @see org.netbeans.jemmy.WindowWaiter
- *
- * @author Alexandre Iline (alexandre.iline@oracle.com)
- */
-public interface ComponentChooser {
+import org.netbeans.jemmy.ComponentChooser;
+import org.testng.annotations.Test;
 
-    /**
-     * Check if the component argument meets the search criteria.
-     *
-     * @param comp Component to check.
-     * @return {@code true} when the component conforms to the search
-     * criteria; {@code false} otherwise.
-     */
-    public boolean checkComponent(Component comp);
+public class ComponentChooserTest {
 
-    /**
-     * Returns searched component description.
-     *
-     * @return a String representing the description value
-     */
-    public default String getDescription() {
-        return toString();
+    @Test
+    public void testGetDescription() {
+        String testString = "toString";
+        ComponentChooser componentChooser = new ComponentChooser() {
+
+            @Override
+            public boolean checkComponent(Component comp) {
+                return false;
+            }
+
+            @Override
+            public String toString() {
+                return testString;
+            }
+        };
+        assertEquals(componentChooser.getDescription(), testString,
+                "Default value of getDescription() is not equal to return value of toString()");
     }
 }
