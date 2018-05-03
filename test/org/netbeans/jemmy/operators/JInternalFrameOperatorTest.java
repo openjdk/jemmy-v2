@@ -23,6 +23,11 @@
 
 package org.netbeans.jemmy.operators;
 
+import static org.netbeans.jemmy.operators.JInternalFrameOperator.CLOSE_BUTTON_TOOLTIP;
+import static org.netbeans.jemmy.operators.JInternalFrameOperator.MAXIMIZE_BUTTON_TOOLTIP;
+import static org.netbeans.jemmy.operators.JInternalFrameOperator.MINIMIZE_BUTTON_TOOLTIP;
+import static org.testng.Assert.assertEquals;
+
 import java.awt.Dimension;
 import java.awt.Point;
 
@@ -40,10 +45,12 @@ public class JInternalFrameOperatorTest {
 
     private JInternalFrameOperator internalFrameOper;
 
+    private JDesktopPane desktop;
+
     @BeforeClass
     protected void setUp() throws Exception {
         JFrame frame = new JFrame();
-        JDesktopPane desktop = new JDesktopPane();
+        desktop = new JDesktopPane();
         frame.setContentPane(desktop);
         JInternalFrame internalFrame = new JInternalFrame(
                 "JInternalFrameOperatorTest", true, true, true, true);
@@ -94,6 +101,53 @@ public class JInternalFrameOperatorTest {
     @Test
     public void testActivate() {
         internalFrameOper.activate();
+    }
+
+    @Test
+    public void testTitleButtons() {
+        // Close, Maximize, and Minimize buttons are adding along with the
+        // construction of internal frame itself
+        JInternalFrame interanlFrame1 = new JInternalFrame(
+                "JInternalFrameButtonTest1", true, true, true, true);
+        verifyTitleButtons(interanlFrame1);
+
+        // Close, Maximize, and Minimize buttons are adding after the
+        // construction of internal frame by using APIs
+        JInternalFrame interanlFrame2 = new JInternalFrame(
+                "JInternalFrameButtonTest2", false, false, false, false);
+        interanlFrame2.setClosable(true);
+        interanlFrame2.setMaximizable(true);
+        interanlFrame2.setIconifiable(true);
+        verifyTitleButtons(interanlFrame2);
+    }
+
+    private void verifyTitleButtons(JInternalFrame interanlFrame) {
+        interanlFrame.setSize(200, 200);
+        interanlFrame.setVisible(true);
+        desktop.add(interanlFrame);
+        JInternalFrameOperator interanlFrameOper = new JInternalFrameOperator(interanlFrame);
+
+        // Verify title buttons tooltip texts
+        assertEquals(interanlFrameOper.getCloseButton().getToolTipText(),
+                CLOSE_BUTTON_TOOLTIP);
+        assertEquals(interanlFrameOper.getMaximizeButton().getToolTipText(),
+                MAXIMIZE_BUTTON_TOOLTIP);
+        assertEquals(interanlFrameOper.getMinimizeButton().getToolTipText(),
+                MINIMIZE_BUTTON_TOOLTIP);
+
+        // Verify different actions using title buttons
+        interanlFrameOper.getMaximizeButton().push();
+        interanlFrameOper.waitMaximum(true);
+        interanlFrameOper.getMaximizeButton().push();
+        interanlFrameOper.waitMaximum(false);
+        interanlFrameOper.getMinimizeButton().push();
+        interanlFrameOper.waitIcon(true);
+        interanlFrameOper.deiconify();
+        interanlFrameOper.waitIcon(false);
+        interanlFrameOper.getCloseButton().push();
+
+        desktop.remove(interanlFrame);
+        interanlFrame.dispose();
     }
 
 }
