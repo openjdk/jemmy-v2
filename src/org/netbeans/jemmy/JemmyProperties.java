@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2016, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2018, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -41,6 +41,7 @@ import org.netbeans.jemmy.drivers.DefaultDriverInstaller;
 import org.netbeans.jemmy.drivers.DriverInstaller;
 import org.netbeans.jemmy.drivers.InputDriverInstaller;
 import org.netbeans.jemmy.explorer.GUIBrowser;
+import org.netbeans.jemmy.util.Platform;
 
 /**
  *
@@ -811,7 +812,7 @@ public class JemmyProperties {
             getCurrentOutput().printStackTrace(e);
         }
         if (installer == null) {
-            if (System.getProperty("os.name").startsWith("Mac OS X")) {
+            if (Platform.isOSX()) {
                 installer = new APIDriverInstaller((model & SHORTCUT_MODEL_MASK) != 0);
             } else {
                 installer = new DefaultDriverInstaller((model & SHORTCUT_MODEL_MASK) != 0);

@@ -49,6 +49,7 @@ import org.netbeans.jemmy.Waitable;
 import org.netbeans.jemmy.Waiter;
 import org.netbeans.jemmy.util.DefaultVisualizer;
 import org.netbeans.jemmy.util.MouseVisualizer;
+import org.netbeans.jemmy.util.Platform;
 
 /**
  * Keeps all environment and low-level methods.
@@ -303,10 +304,9 @@ public abstract class Operator
         //Linux - new MouseVisualizer(MouseVisualizer.TOP, 0.5, 10, false)
         //solaris - new MouseVisualizer()
         //others - new DefaultVisualizer()
-        String os = System.getProperty("os.name").toUpperCase();
-        if (os.startsWith("LINUX")) {
+        if (Platform.isLinux()) {
             setDefaultComponentVisualizer(new MouseVisualizer(MouseVisualizer.TOP, 0.5, 10, false));
-        } else if (os.startsWith("SUNOS")) {
+        } else if (Platform.isSolaris()) {
             setDefaultComponentVisualizer(new MouseVisualizer());
         } else {
             setDefaultComponentVisualizer(new DefaultVisualizer());

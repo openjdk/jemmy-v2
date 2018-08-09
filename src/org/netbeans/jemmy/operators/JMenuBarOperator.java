@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2016, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2018, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -51,6 +51,7 @@ import org.netbeans.jemmy.Timeoutable;
 import org.netbeans.jemmy.Timeouts;
 import org.netbeans.jemmy.drivers.DriverManager;
 import org.netbeans.jemmy.drivers.MenuDriver;
+import org.netbeans.jemmy.util.Platform;
 
 /**
  * <BR><BR>Timeouts used: <BR>
@@ -600,7 +601,7 @@ public class JMenuBarOperator extends JComponentOperator
         }
         JMenuItemOperator result;
         // isVisible() on items returns false on mac, so we need a special searcher.
-        if (System.getProperty("os.name").toLowerCase().indexOf("mac") > -1) { // NOI18N
+        if (Platform.isOSX()) {
             ComponentSearcher searcher = new ComponentSearcher((Container) menuCont.getSource());
             searcher.setOutput(output);
             Component c = searcher.findComponent(new JMenuItemOperator.JMenuItemByLabelFinder(path[path.length - 1], getComparator()));
