@@ -29,6 +29,7 @@ import static org.netbeans.jemmy.operators.JInternalFrameOperator.CLOSE_BUTTON_T
 import static org.netbeans.jemmy.operators.JInternalFrameOperator.MAXIMIZE_BUTTON_TOOLTIP;
 import static org.netbeans.jemmy.operators.JInternalFrameOperator.MINIMIZE_BUTTON_TOOLTIP;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.fail;
 
 import java.awt.Dimension;
 import java.awt.Point;
@@ -37,6 +38,7 @@ import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
 
+import org.netbeans.jemmy.util.Platform;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -48,6 +50,9 @@ public class JInternalFrameOperatorTest {
     private JInternalFrameOperator internalFrameOper;
 
     private JDesktopPane desktop;
+
+    private final static String OSX_EXCEPT_MESSAGE = "Jemmy doesn't support"
+            + " getting or intializing title related operators on Mac OSx";
 
     @BeforeClass
     protected void setUp() throws Exception {
@@ -107,20 +112,47 @@ public class JInternalFrameOperatorTest {
 
     @Test
     public void testTitleButtons() {
-        // Close, Maximize, and Minimize buttons are adding along with the
-        // construction of internal frame itself
-        JInternalFrame interanlFrame1 = new JInternalFrame(
-                "JInternalFrameButtonTest1", true, true, true, true);
-        verifyTitleButtons(interanlFrame1);
+        if(!Platform.isOSX()) {
+            // Close, Maximize, and Minimize buttons are adding along with the
+            // construction of internal frame itself
+            JInternalFrame interanlFrame1 = new JInternalFrame(
+                    "JInternalFrameButtonTest1", true, true, true, true);
+            verifyTitleButtons(interanlFrame1);
 
-        // Close, Maximize, and Minimize buttons are adding after the
-        // construction of internal frame by using APIs
-        JInternalFrame interanlFrame2 = new JInternalFrame(
-                "JInternalFrameButtonTest2", false, false, false, false);
-        interanlFrame2.setClosable(true);
-        interanlFrame2.setMaximizable(true);
-        interanlFrame2.setIconifiable(true);
-        verifyTitleButtons(interanlFrame2);
+            // Close, Maximize, and Minimize buttons are adding after the
+            // construction of internal frame by using APIs
+            JInternalFrame interanlFrame2 = new JInternalFrame(
+                    "JInternalFrameButtonTest2", false, false, false, false);
+            interanlFrame2.setClosable(true);
+            interanlFrame2.setMaximizable(true);
+            interanlFrame2.setIconifiable(true);
+            verifyTitleButtons(interanlFrame2);
+        } else {
+            JInternalFrame interanlFrame = new JInternalFrame(
+                    "JInternalFrameButtonTest3", true, true, true, true);
+            interanlFrame.setSize(200, 200);
+            interanlFrame.setVisible(true);
+            desktop.add(interanlFrame);
+            JInternalFrameOperator interanlFrameOper = new JInternalFrameOperator(interanlFrame);
+            try {
+                interanlFrameOper.getMaximizeButton();
+                fail();
+            } catch (UnsupportedOperationException e) {
+                assertEquals(e.getMessage(), OSX_EXCEPT_MESSAGE);
+            }
+            try {
+                interanlFrameOper.getMinimizeButton();
+                fail();
+            } catch (UnsupportedOperationException e) {
+                assertEquals(e.getMessage(), OSX_EXCEPT_MESSAGE);
+            }
+            try {
+                interanlFrameOper.getCloseButton();
+                fail();
+            } catch (UnsupportedOperationException e) {
+                assertEquals(e.getMessage(), OSX_EXCEPT_MESSAGE);
+            }
+        }
     }
 
     private void verifyTitleButtons(JInternalFrame interanlFrame) {

@@ -57,6 +57,7 @@ import org.netbeans.jemmy.drivers.FrameDriver;
 import org.netbeans.jemmy.drivers.InternalFrameDriver;
 import org.netbeans.jemmy.drivers.WindowDriver;
 import org.netbeans.jemmy.util.EmptyVisualizer;
+import org.netbeans.jemmy.util.Platform;
 
 /**
  * Class provides necessary functionality to operate with
@@ -682,7 +683,11 @@ public class JInternalFrameOperator extends JComponentOperator
      * @return an icon operator.
      */
     public JDesktopIconOperator getIconOperator() {
-        initOperators();
+        if(Platform.isOSX()) {
+            initIconOperator();
+        } else {
+            initOperators();
+        }
         return iconOperator;
     }
 
@@ -1371,20 +1376,32 @@ public class JInternalFrameOperator extends JComponentOperator
     }
 
     /**
+     * Initialize icon operator
+     */
+    protected void initIconOperator() {
+        iconOperator = new JDesktopIconOperator(((JInternalFrame) getSource()).getDesktopIcon());
+        iconOperator.copyEnvironment(this);
+    }
+
+    /**
      * Initiaites suboperators.
      */
     protected void initOperators() {
-        iconOperator = new JDesktopIconOperator(((JInternalFrame) getSource()).getDesktopIcon());
-        iconOperator.copyEnvironment(this);
-        Container titlePane = findTitlePane();
-        if (!isIcon() && titlePane != null) {
-            if (titleOperator == null) {
-                titleOperator = new ContainerOperator<>(titlePane);
-                if (getContainer(new ComponentChooser() {
-                    @Override
-                    public boolean checkComponent(Component comp) {
-                        return comp instanceof JDesktopPane;
-                    }
+        initIconOperator();
+        if(Platform.isOSX()) {
+            throw new UnsupportedOperationException(
+                    "Jemmy doesn't support getting or intializing title"
+                    + " related operators on Mac OSx");
+        } else {
+            Container titlePane = findTitlePane();
+            if (!isIcon() && titlePane != null) {
+                if (titleOperator == null) {
+                    titleOperator = new ContainerOperator<>(titlePane);
+                    if (getContainer(new ComponentChooser() {
+                        @Override
+                        public boolean checkComponent(Component comp) {
+                            return comp instanceof JDesktopPane;
+                        }
 
                     @Override
                     public String getDescription() {
@@ -1420,6 +1437,7 @@ public class JInternalFrameOperator extends JComponentOperator
             minOper = null;
             maxOper = null;
             closeOper = null;
+            }
         }
     }
 
