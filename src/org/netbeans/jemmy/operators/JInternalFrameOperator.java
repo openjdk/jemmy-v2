@@ -1390,7 +1390,7 @@ public class JInternalFrameOperator extends JComponentOperator
         initIconOperator();
         if(Platform.isOSX()) {
             throw new UnsupportedOperationException(
-                    "Jemmy doesn't support getting or intializing title"
+                    "Jemmy doesn't support getting or initializing title"
                     + " related operators on Mac OSx");
         } else {
             Container titlePane = findTitlePane();
