@@ -30,12 +30,14 @@ import static org.testng.Assert.fail;
 import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
+import javax.swing.UIManager;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
 
+import org.netbeans.jemmy.JemmyProperties;
+import org.netbeans.jemmy.LookAndFeelProvider;
 import org.netbeans.jemmy.TimeoutExpiredException;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
 
 public class JInternalFrameOperatorCloseTest {
@@ -44,11 +46,12 @@ public class JInternalFrameOperatorCloseTest {
 
     private JInternalFrameOperator internalFrameOper;
 
-    @BeforeClass
-    protected void setUp() throws Exception {
+    private void setUp() throws Exception {
         JFrame frame = new JFrame();
         JDesktopPane desktop = new JDesktopPane();
         frame.setContentPane(desktop);
+        JemmyProperties.setCurrentDispatchingModel(
+                JemmyProperties.getCurrentDispatchingModel());
         JInternalFrame internalFrame = new JInternalFrame("JInternalFrameOperatorTest", true, true, true, true);
         internalFrame.setName("JInternalFrameOperatorTest");
         internalFrame.setSize(200, 200);
@@ -62,15 +65,16 @@ public class JInternalFrameOperatorCloseTest {
         internalFrameOper.setVerification(true);
     }
 
-    @AfterClass
+    @AfterMethod
     protected void tearDown() throws Exception {
         frameOper.setVisible(false);
         frameOper.dispose();
     }
 
-    @Test
-    public void testClose() {
-
+    @Test(dataProvider = "availableLookAndFeels", dataProviderClass = LookAndFeelProvider.class)
+    public void testClose(String lookAndFeel) throws Exception {
+        UIManager.setLookAndFeel(lookAndFeel);
+        setUp();
         InternalFrameListener listener = new InternalFrameListener() {
 
             @Override

@@ -37,10 +37,12 @@ import java.awt.Point;
 import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
+import javax.swing.UIManager;
 
+import org.netbeans.jemmy.JemmyProperties;
+import org.netbeans.jemmy.LookAndFeelProvider;
 import org.netbeans.jemmy.util.Platform;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
 
 public class JInternalFrameOperatorTest {
@@ -52,13 +54,14 @@ public class JInternalFrameOperatorTest {
     private JDesktopPane desktop;
 
     private final static String OSX_EXCEPT_MESSAGE = "Jemmy doesn't support"
-            + " getting or intializing title related operators on Mac OSx";
+            + " getting or initializing title related operators on Mac OSx";
 
-    @BeforeClass
-    protected void setUp() throws Exception {
+    private void setUp() throws Exception {
         JFrame frame = new JFrame();
         desktop = new JDesktopPane();
         frame.setContentPane(desktop);
+        JemmyProperties.setCurrentDispatchingModel(
+                JemmyProperties.getCurrentDispatchingModel());
         JInternalFrame internalFrame = new JInternalFrame(
                 "JInternalFrameOperatorTest", true, true, true, true);
         internalFrame.setName("JInternalFrameOperatorTest");
@@ -69,50 +72,73 @@ public class JInternalFrameOperatorTest {
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
         frameOper = new JFrameOperator();
-        internalFrameOper = new JInternalFrameOperator(frameOper);
+        internalFrameOper = new JInternalFrameOperator(internalFrame);
         internalFrameOper.setVerification(true);
     }
 
-    @AfterClass
+    @AfterMethod
     protected void tearDown() throws Exception {
         frameOper.setVisible(false);
         frameOper.dispose();
     }
 
-    @Test
-    public void testIconify() {
+    @Test(dataProvider = "availableLookAndFeels", dataProviderClass = LookAndFeelProvider.class)
+    public void testConstructors(String lookAndFeel) throws Exception {
+        UIManager.setLookAndFeel(lookAndFeel);
+        setUp();
+        new JInternalFrameOperator(frameOper);
+        new JInternalFrameOperator(frameOper, "JInternalFrameOperatorTest");
+        new JInternalFrameOperator(frameOper,
+                comp -> "JInternalFrameOperatorTest".equals(comp.getName()));
+
+    }
+
+    @Test(dataProvider = "availableLookAndFeels", dataProviderClass = LookAndFeelProvider.class)
+    public void testIconify(String lookAndFeel) throws Exception {
+        UIManager.setLookAndFeel(lookAndFeel);
+        setUp();
         internalFrameOper.iconify();
         internalFrameOper.deiconify();
     }
 
-    @Test
-    public void testMaximize() {
+    @Test(dataProvider = "availableLookAndFeels", dataProviderClass = LookAndFeelProvider.class)
+    public void testMaximize(String lookAndFeel) throws Exception {
+        UIManager.setLookAndFeel(lookAndFeel);
+        setUp();
         internalFrameOper.maximize();
         internalFrameOper.demaximize();
     }
 
-    @Test
-    public void testMove() {
+    @Test(dataProvider = "availableLookAndFeels", dataProviderClass = LookAndFeelProvider.class)
+    public void testMove(String lookAndFeel) throws Exception {
+        UIManager.setLookAndFeel(lookAndFeel);
+        setUp();
         Point originalLocation = internalFrameOper.getLocation();
         internalFrameOper.move(150, 150);
         internalFrameOper.move(originalLocation.x, originalLocation.y);
     }
 
-    @Test
-    public void testResize() {
+    @Test(dataProvider = "availableLookAndFeels", dataProviderClass = LookAndFeelProvider.class)
+    public void testResize(String lookAndFeel) throws Exception {
+        UIManager.setLookAndFeel(lookAndFeel);
+        setUp();
         Dimension originaSize = internalFrameOper.getSize();
         internalFrameOper.resize(250, 250);
         internalFrameOper.resize(originaSize.width, originaSize.height);
     }
 
-    @Test
-    public void testActivate() {
+    @Test(dataProvider = "availableLookAndFeels", dataProviderClass = LookAndFeelProvider.class)
+    public void testActivate(String lookAndFeel) throws Exception {
+        UIManager.setLookAndFeel(lookAndFeel);
+        setUp();
         internalFrameOper.activate();
     }
 
-    @Test
-    public void testTitleButtons() {
-        if(!Platform.isOSX()) {
+    @Test(dataProvider = "availableLookAndFeels", dataProviderClass = LookAndFeelProvider.class)
+    public void testTitleButtons(String lookAndFeel) throws Exception {
+        UIManager.setLookAndFeel(lookAndFeel);
+        setUp();
+        if(!Platform.isOSX() && !"Motif".equals(UIManager.getLookAndFeel().getID())) {
             // Close, Maximize, and Minimize buttons are adding along with the
             // construction of internal frame itself
             JInternalFrame interanlFrame1 = new JInternalFrame(
@@ -127,7 +153,7 @@ public class JInternalFrameOperatorTest {
             interanlFrame2.setMaximizable(true);
             interanlFrame2.setIconifiable(true);
             verifyTitleButtons(interanlFrame2);
-        } else {
+        } else if (Platform.isOSX()){
             JInternalFrame interanlFrame = new JInternalFrame(
                     "JInternalFrameButtonTest3", true, true, true, true);
             interanlFrame.setSize(200, 200);
