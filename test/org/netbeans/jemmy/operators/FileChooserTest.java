@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2017, 2018, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -24,27 +24,30 @@
  */
 package org.netbeans.jemmy.operators;
 
-import org.netbeans.jemmy.ComponentChooser;
-import org.netbeans.jemmy.util.Dumper;
-import org.testng.ITestResult;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
+import static org.testng.Assert.assertTrue;
 
-import javax.swing.JFileChooser;
 import java.awt.Component;
 import java.awt.Container;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertTrue;
+import javax.swing.JFileChooser;
+import javax.swing.UIManager;
+import javax.swing.filechooser.FileSystemView;
+
+import org.netbeans.jemmy.ComponentChooser;
+import org.netbeans.jemmy.LookAndFeelProvider;
+import org.netbeans.jemmy.util.Dumper;
+import org.testng.ITestResult;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 public class FileChooserTest {
 
+    private JFrameOperator frame;
     private JFileChooserOperator fileChooser;
     private File dir, file;
 
@@ -56,18 +59,28 @@ public class FileChooserTest {
         file = File.createTempFile("testFile", ".txt", dir);
         file.deleteOnExit();
         File.createTempFile("zestFile", ".txt", dir).deleteOnExit();
+    }
+
+    @BeforeMethod
+    public void setUpBeforeMethod(Object[] args) throws Exception {
+        UIManager.setLookAndFeel((String)args[0]);
         FileChooserApp.show(dir);
-        JFrameOperator frame = new JFrameOperator("Sample File Chooser");
+        frame = new JFrameOperator("Sample File Chooser");
         fileChooser = new JFileChooserOperator(
                 JFileChooserOperator.findJFileChooser((Container) frame.getSource()));
     }
+
     @AfterMethod
     public void tearDown(ITestResult result) throws FileNotFoundException {
+        frame.setVisible(false);
+        frame.dispose();
         if(!result.isSuccess())
-            Dumper.dumpAll(new File(result.getMethod() + "-dump.xml").getAbsolutePath());
+            Dumper.dumpAll(new File(UIManager.getLookAndFeel().getClass().getSimpleName()
+                    + "_" + result.getMethod() + "-dump.xml").getAbsolutePath());
     }
-    @Test
-    public void testSelection() {
+
+    @Test(dataProvider = "availableLookAndFeels", dataProviderClass = LookAndFeelProvider.class)
+    public void testSelection(String lookAndFeel) throws Exception {
         fileChooser.selectFile(file.getName());
         fileChooser.waitState(new ComponentChooser() {
             @Override
@@ -82,8 +95,25 @@ public class FileChooserTest {
             }
         });
     }
-    @Test
-    public void testCount() {
+
+    @Test(dataProvider = "availableLookAndFeels", dataProviderClass = LookAndFeelProvider.class)
+    public void testCount(String lookAndFeel) throws Exception {
         assertTrue(fileChooser.getFileCount() >= 3);
+    }
+
+    @Test(dataProvider = "availableLookAndFeels", dataProviderClass = LookAndFeelProvider.class)
+    public void testGoHome(String lookAndFeel) throws Exception {
+        // In Aqua, GTK and Motif L&Fs, JFileChooser does not have
+        // "Go Home" button.
+        if (!UIManager.getLookAndFeel().getID().equals("Aqua")
+                && !UIManager.getLookAndFeel().getID().equals("Motif")
+                && !UIManager.getLookAndFeel().getID().equals("GTK")) {
+            File previousDirectory = fileChooser.getCurrentDirectory();
+            fileChooser.goHome();
+            fileChooser.waitState(chooser -> fileChooser.getCurrentDirectory().getPath().equals(
+                    FileSystemView.getFileSystemView().getHomeDirectory().getPath()));
+            fileChooser.setCurrentDirectory(previousDirectory);
+            fileChooser.rescanCurrentDirectory();
+        }
     }
 }

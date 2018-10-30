@@ -38,6 +38,7 @@ import org.netbeans.jemmy.JemmyProperties;
 import org.netbeans.jemmy.LookAndFeelProvider;
 import org.netbeans.jemmy.TimeoutExpiredException;
 import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 public class JInternalFrameOperatorCloseTest {
@@ -46,7 +47,9 @@ public class JInternalFrameOperatorCloseTest {
 
     private JInternalFrameOperator internalFrameOper;
 
-    private void setUp() throws Exception {
+    @BeforeMethod
+    private void setUp(Object[] args) throws Exception {
+        UIManager.setLookAndFeel((String)args[0]);
         JFrame frame = new JFrame();
         JDesktopPane desktop = new JDesktopPane();
         frame.setContentPane(desktop);
@@ -73,8 +76,6 @@ public class JInternalFrameOperatorCloseTest {
 
     @Test(dataProvider = "availableLookAndFeels", dataProviderClass = LookAndFeelProvider.class)
     public void testClose(String lookAndFeel) throws Exception {
-        UIManager.setLookAndFeel(lookAndFeel);
-        setUp();
         InternalFrameListener listener = new InternalFrameListener() {
 
             @Override
