@@ -30,6 +30,7 @@ import javax.swing.JToolTip;
 
 import org.netbeans.jemmy.ComponentChooser;
 import org.netbeans.jemmy.TimeoutExpiredException;
+import org.netbeans.jemmy.Timeouts;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -45,6 +46,8 @@ public class JToolTipOperatorTest {
         frame = new JFrame();
         frame.setSize(400,400);
         frame.setLocationRelativeTo(null);
+        Timeouts timeouts = Operator.getEnvironmentOperator().getTimeouts();
+        timeouts.setTimeout("JToolTipOperator.WaitToolTipTimeout", 5000);
     }
 
     @AfterClass
