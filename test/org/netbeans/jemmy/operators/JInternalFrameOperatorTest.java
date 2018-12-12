@@ -41,6 +41,7 @@ import javax.swing.UIManager;
 
 import org.netbeans.jemmy.JemmyProperties;
 import org.netbeans.jemmy.LookAndFeelProvider;
+import org.netbeans.jemmy.util.LookAndFeel;
 import org.netbeans.jemmy.util.Platform;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -127,7 +128,7 @@ public class JInternalFrameOperatorTest {
 
     @Test(dataProvider = "availableLookAndFeels", dataProviderClass = LookAndFeelProvider.class)
     public void testTitleButtons(String lookAndFeel) throws Exception {
-        if(!Platform.isOSX() && !"Motif".equals(UIManager.getLookAndFeel().getID())) {
+        if(!Platform.isOSX() && !LookAndFeel.isMotif()) {
             // Close, Maximize, and Minimize buttons are adding along with the
             // construction of internal frame itself
             JInternalFrame interanlFrame1 = new JInternalFrame(

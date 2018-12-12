@@ -39,6 +39,7 @@ import javax.swing.filechooser.FileSystemView;
 import org.netbeans.jemmy.ComponentChooser;
 import org.netbeans.jemmy.LookAndFeelProvider;
 import org.netbeans.jemmy.util.Dumper;
+import org.netbeans.jemmy.util.LookAndFeel;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
@@ -105,9 +106,7 @@ public class FileChooserTest {
     public void testGoHome(String lookAndFeel) throws Exception {
         // In Aqua, GTK and Motif L&Fs, JFileChooser does not have
         // "Go Home" button.
-        if (!UIManager.getLookAndFeel().getID().equals("Aqua")
-                && !UIManager.getLookAndFeel().getID().equals("Motif")
-                && !UIManager.getLookAndFeel().getID().equals("GTK")) {
+        if (!LookAndFeel.isAqua() && !LookAndFeel.isMotif() && !LookAndFeel.isGTK()) {
             File previousDirectory = fileChooser.getCurrentDirectory();
             fileChooser.goHome();
             fileChooser.waitState(chooser -> fileChooser.getCurrentDirectory().getPath().equals(

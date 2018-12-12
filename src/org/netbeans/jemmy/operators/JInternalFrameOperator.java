@@ -57,6 +57,7 @@ import org.netbeans.jemmy.drivers.FrameDriver;
 import org.netbeans.jemmy.drivers.InternalFrameDriver;
 import org.netbeans.jemmy.drivers.WindowDriver;
 import org.netbeans.jemmy.util.EmptyVisualizer;
+import org.netbeans.jemmy.util.LookAndFeel;
 import org.netbeans.jemmy.util.Platform;
 
 /**
@@ -1419,7 +1420,7 @@ public class JInternalFrameOperator extends JComponentOperator
                         return "JInternalFrameOperator.initOperators.ComponentChooser{description = " + getDescription() + '}';
                     }
                 }) != null) {
-                    if("Motif".equals(UIManager.getLookAndFeel().getID())) {
+                    if(LookAndFeel.isMotif()) {
                         popupButtonOper = new JButtonOperator(titleOperator, 0);
                     } else {
                         minOper = new JButtonOperator(titleOperator,
@@ -1436,7 +1437,7 @@ public class JInternalFrameOperator extends JComponentOperator
                     maxOper = null;
                 }
                 if (isClosable()) {
-                    if(!"Motif".equals(UIManager.getLookAndFeel().getID())) {
+                    if(!LookAndFeel.isMotif()) {
                         closeOper = new JButtonOperator(titleOperator,
                             new JComponentByTipFinder(CLOSE_BUTTON_TOOLTIP));
                     }
