@@ -720,10 +720,9 @@ public abstract class Operator
         try {
             return stateWaiter.waitAction(null);
         } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw (new JemmyException(
+            throw new JemmyException(
                     "Waiting of \"" + waitable.getDescription()
-                            + "\" state has been interrupted!"));
+                            + "\" state has been interrupted!");
         }
     }
 
