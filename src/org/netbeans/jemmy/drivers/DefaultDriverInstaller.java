@@ -24,8 +24,6 @@
  */
 package org.netbeans.jemmy.drivers;
 
-import javax.swing.UIManager;
-
 import org.netbeans.jemmy.ClassReference;
 import org.netbeans.jemmy.JemmyException;
 import org.netbeans.jemmy.JemmyProperties;
