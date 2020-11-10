@@ -58,6 +58,13 @@ public class TextComponentOperator extends ComponentOperator
      */
     public static final String TEXT_DPROP = "Text";
 
+    /**
+     * Identifier for a "selected text" property.
+     *
+     * @see #getDump
+     */
+    public static final String SELECTED_TEXT_DPROP = "Selected text";
+
     private final static long PUSH_KEY_TIMEOUT = 0;
     private final static long BETWEEN_KEYS_TIMEOUT = 0;
     private final static long CHANGE_CARET_POSITION_TIMEOUT = 60000;
@@ -505,6 +512,8 @@ public class TextComponentOperator extends ComponentOperator
     public Hashtable<String, Object> getDump() {
         Hashtable<String, Object> result = super.getDump();
         result.put(TEXT_DPROP, ((TextComponent) getSource()).getText());
+        String selected = ((TextComponent) getSource()).getSelectedText();
+        result.put(SELECTED_TEXT_DPROP, (selected != null) ? selected : "");
         return result;
     }
 

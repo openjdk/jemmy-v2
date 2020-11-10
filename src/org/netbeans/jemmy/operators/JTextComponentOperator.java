@@ -828,10 +828,8 @@ public class JTextComponentOperator extends JComponentOperator
     public Hashtable<String, Object> getDump() {
         Hashtable<String, Object> result = super.getDump();
         result.put(TEXT_DPROP, ((JTextComponent) getSource()).getText());
-        if (((JTextComponent) getSource()).getSelectedText() != null
-                && !((JTextComponent) getSource()).getSelectedText().equals("")) {
-            result.put(SELECTED_TEXT_DPROP, ((JTextComponent) getSource()).getSelectedText());
-        }
+        String selected = ((JTextComponent) getSource()).getSelectedText();
+        result.put(SELECTED_TEXT_DPROP, (selected != null) ? selected : "");
         result.put(IS_EDITABLE_DPROP, ((JTextComponent) getSource()).isEditable() ? "true" : "false");
         return result;
     }
