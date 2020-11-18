@@ -96,9 +96,9 @@ public class JInternalFrameOperatorCloseTest {
             }
 
             @Override
-	    public void internalFrameClosing(InternalFrameEvent e) {
-	          new QueueTool().waitEmpty();
-	    }
+            public void internalFrameClosing(InternalFrameEvent e) {
+                    new QueueTool().waitEmpty();
+            }
 
             @Override
             public void internalFrameClosed(InternalFrameEvent e) {
