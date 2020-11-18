@@ -36,6 +36,7 @@ import javax.swing.event.InternalFrameListener;
 
 import org.netbeans.jemmy.JemmyProperties;
 import org.netbeans.jemmy.LookAndFeelProvider;
+import org.netbeans.jemmy.QueueTool;
 import org.netbeans.jemmy.TimeoutExpiredException;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -95,13 +96,9 @@ public class JInternalFrameOperatorCloseTest {
             }
 
             @Override
-            public void internalFrameClosing(InternalFrameEvent e) {
-                try {
-                    this.wait(80000);
-                } catch (InterruptedException e1) {
-                    e1.printStackTrace();
-                }
-            }
+			public void internalFrameClosing(InternalFrameEvent e) {
+				new QueueTool().waitEmpty();
+			}
 
             @Override
             public void internalFrameClosed(InternalFrameEvent e) {
