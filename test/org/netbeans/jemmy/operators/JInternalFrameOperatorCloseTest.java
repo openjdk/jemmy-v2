@@ -70,9 +70,9 @@ public class JInternalFrameOperatorCloseTest {
     }
 
     @Test(dataProvider = "availableLookAndFeels", dataProviderClass = LookAndFeelProvider.class)
-	public void testClose(String lookAndFeel) throws Exception {
-		// Really closing the frame
-		internalFrameOper.close();
-	}
+    public void testClose(String lookAndFeel) throws Exception {
+       // Really closing the frame
+       internalFrameOper.close();
+    }
 
 }
