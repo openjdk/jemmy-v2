@@ -25,19 +25,13 @@
 
 package org.netbeans.jemmy.operators;
 
-import static org.testng.Assert.fail;
-
 import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
 import javax.swing.UIManager;
-import javax.swing.event.InternalFrameEvent;
-import javax.swing.event.InternalFrameListener;
 
 import org.netbeans.jemmy.JemmyProperties;
 import org.netbeans.jemmy.LookAndFeelProvider;
-import org.netbeans.jemmy.QueueTool;
-import org.netbeans.jemmy.TimeoutExpiredException;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -76,52 +70,9 @@ public class JInternalFrameOperatorCloseTest {
     }
 
     @Test(dataProvider = "availableLookAndFeels", dataProviderClass = LookAndFeelProvider.class)
-    public void testClose(String lookAndFeel) throws Exception {
-        InternalFrameListener listener = new InternalFrameListener() {
-
-            @Override
-            public void internalFrameOpened(InternalFrameEvent e) {
-            }
-
-            @Override
-            public void internalFrameIconified(InternalFrameEvent e) {
-            }
-
-            @Override
-            public void internalFrameDeiconified(InternalFrameEvent e) {
-            }
-
-            @Override
-            public void internalFrameDeactivated(InternalFrameEvent e) {
-            }
-
-            @Override
-            public void internalFrameClosing(InternalFrameEvent e) {
-                    new QueueTool().waitEmpty();
-            }
-
-            @Override
-            public void internalFrameClosed(InternalFrameEvent e) {
-            }
-
-            @Override
-            public void internalFrameActivated(InternalFrameEvent e) {
-            }
-        };
-
-        // Making not to close the fame for 1 minute and expecting TimeoutExpiredException
-        // from waitClosed()
-        try {
-            internalFrameOper.addInternalFrameListener(listener);
-            internalFrameOper.close();
-            fail();
-        } catch (TimeoutExpiredException e) {
-        } finally {
-            internalFrameOper.removeInternalFrameListener(listener);
-        }
-
-        // Really closing the frame
-        internalFrameOper.close();
-    }
+	public void testClose(String lookAndFeel) throws Exception {
+		// Really closing the frame
+		internalFrameOper.close();
+	}
 
 }
