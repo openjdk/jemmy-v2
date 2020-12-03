@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2018, 2020, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -25,26 +25,28 @@
 
 package org.netbeans.jemmy.operators;
 
-import static org.testng.Assert.fail;
-
+import static java.util.Arrays.stream;
 import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
 import javax.swing.UIManager;
-import javax.swing.event.InternalFrameEvent;
-import javax.swing.event.InternalFrameListener;
 
 import org.netbeans.jemmy.JemmyProperties;
 import org.netbeans.jemmy.LookAndFeelProvider;
 import org.netbeans.jemmy.TimeoutExpiredException;
+import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import java.beans.PropertyVetoException;
 
 public class JInternalFrameOperatorCloseTest {
 
     private JFrameOperator frameOper;
 
+    private UncloseableInternalFrame internalFrame;
     private JInternalFrameOperator internalFrameOper;
 
     @BeforeMethod
@@ -55,7 +57,7 @@ public class JInternalFrameOperatorCloseTest {
         frame.setContentPane(desktop);
         JemmyProperties.setCurrentDispatchingModel(
                 JemmyProperties.getCurrentDispatchingModel());
-        JInternalFrame internalFrame = new JInternalFrame("JInternalFrameOperatorTest", true, true, true, true);
+        internalFrame = new UncloseableInternalFrame("JInternalFrameOperatorTest", true, true, true, true);
         internalFrame.setName("JInternalFrameOperatorTest");
         internalFrame.setSize(200, 200);
         internalFrame.setVisible(true);
@@ -76,55 +78,37 @@ public class JInternalFrameOperatorCloseTest {
 
     @Test(dataProvider = "availableLookAndFeels", dataProviderClass = LookAndFeelProvider.class)
     public void testClose(String lookAndFeel) throws Exception {
-        InternalFrameListener listener = new InternalFrameListener() {
-
-            @Override
-            public void internalFrameOpened(InternalFrameEvent e) {
-            }
-
-            @Override
-            public void internalFrameIconified(InternalFrameEvent e) {
-            }
-
-            @Override
-            public void internalFrameDeiconified(InternalFrameEvent e) {
-            }
-
-            @Override
-            public void internalFrameDeactivated(InternalFrameEvent e) {
-            }
-
-            @Override
-            public void internalFrameClosing(InternalFrameEvent e) {
-                try {
-                    this.wait(80000);
-                } catch (InterruptedException e1) {
-                    e1.printStackTrace();
-                }
-            }
-
-            @Override
-            public void internalFrameClosed(InternalFrameEvent e) {
-            }
-
-            @Override
-            public void internalFrameActivated(InternalFrameEvent e) {
-            }
-        };
-
-        // Making not to close the fame for 1 minute and expecting TimeoutExpiredException
-        // from waitClosed()
         try {
-            internalFrameOper.addInternalFrameListener(listener);
+            //trying to close the uncloseable frame
+            //expected to fail by timeout, hence decreasing timeout
+            internalFrameOper.getTimeouts().setTimeout("ComponentOperator.WaitStateTimeout", 5000);
             internalFrameOper.close();
+            //that would mean that the exception is not thrown
             fail();
         } catch (TimeoutExpiredException e) {
+            //make sure the exception is coming from the right place
+            assertTrue(stream(e.getStackTrace()).anyMatch(ste ->
+                    ste.getClassName().equals(JInternalFrameOperator.class.getName()) &&
+                    ste.getMethodName().equals("waitClosed")));
+            System.out.println("This exception has been caught, as expected:");
+            e.printStackTrace(System.out);
         } finally {
-            internalFrameOper.removeInternalFrameListener(listener);
+            // Really closing the frame this time
+            internalFrame.done = true;
+            internalFrameOper.close();
         }
-
-        // Really closing the frame
-        internalFrameOper.close();
     }
 
+    private static class UncloseableInternalFrame extends JInternalFrame {
+        private boolean done = false;
+        public UncloseableInternalFrame(String title, boolean resizable, boolean closable, boolean maximizable, boolean iconifiable) {
+            super(title, resizable, closable, maximizable, iconifiable);
+        }
+
+        @Override
+        public void setClosed(boolean b) throws PropertyVetoException {
+            //unless done with the test, we do not want this frame to close ever
+            super.setClosed(done && b);
+        }
+    }
 }
