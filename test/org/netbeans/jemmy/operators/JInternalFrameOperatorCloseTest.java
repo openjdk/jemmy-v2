@@ -34,8 +34,13 @@ import javax.swing.UIManager;
 import org.netbeans.jemmy.JemmyProperties;
 import org.netbeans.jemmy.LookAndFeelProvider;
 import org.netbeans.jemmy.TimeoutExpiredException;
+
+import static org.netbeans.jemmy.drivers.DriverManager.WINDOW_DRIVER_ID;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
+
+import org.netbeans.jemmy.drivers.DriverManager;
+import org.netbeans.jemmy.drivers.WindowDriver;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -46,8 +51,8 @@ public class JInternalFrameOperatorCloseTest {
 
     private JFrameOperator frameOper;
 
-    private UncloseableInternalFrame internalFrame;
     private JInternalFrameOperator internalFrameOper;
+    private WindowDriver oldDriver;
 
     @BeforeMethod
     private void setUp(Object[] args) throws Exception {
@@ -57,7 +62,7 @@ public class JInternalFrameOperatorCloseTest {
         frame.setContentPane(desktop);
         JemmyProperties.setCurrentDispatchingModel(
                 JemmyProperties.getCurrentDispatchingModel());
-        internalFrame = new UncloseableInternalFrame("JInternalFrameOperatorTest", true, true, true, true);
+        JInternalFrame internalFrame = new JInternalFrame("JInternalFrameOperatorTest", true, true, true, true);
         internalFrame.setName("JInternalFrameOperatorTest");
         internalFrame.setSize(200, 200);
         internalFrame.setVisible(true);
@@ -66,6 +71,39 @@ public class JInternalFrameOperatorCloseTest {
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
         frameOper = new JFrameOperator();
+        //override windows driver for the operator to not do anything to close
+        oldDriver = DriverManager.getWindowDriver(JInternalFrameOperator.class);
+        DriverManager.setDriver(WINDOW_DRIVER_ID, new WindowDriver() {
+            @Override
+            public void activate(ComponentOperator oper) {
+                oldDriver.activate(oper);
+            }
+
+            @Override
+            public void requestClose(ComponentOperator oper) {
+                //do nothing here
+            }
+
+            @Override
+            public void requestCloseAndThenHide(ComponentOperator oper) {
+                //do nothing here
+            }
+
+            @Override
+            public void close(ComponentOperator oper) {
+                //do nothing here
+            }
+
+            @Override
+            public void move(ComponentOperator oper, int x, int y) {
+                oldDriver.move(oper, x, y);
+            }
+
+            @Override
+            public void resize(ComponentOperator oper, int width, int height) {
+                oldDriver.resize(oper, width, height);
+            }
+        }, JInternalFrameOperator.class);
         internalFrameOper = new JInternalFrameOperator(frameOper);
         internalFrameOper.setVerification(true);
     }
@@ -74,6 +112,7 @@ public class JInternalFrameOperatorCloseTest {
     protected void tearDown() throws Exception {
         frameOper.setVisible(false);
         frameOper.dispose();
+        DriverManager.setDriver(WINDOW_DRIVER_ID, oldDriver, JInternalFrameOperator.class);
     }
 
     @Test(dataProvider = "availableLookAndFeels", dataProviderClass = LookAndFeelProvider.class)
@@ -92,19 +131,6 @@ public class JInternalFrameOperatorCloseTest {
                     ste.getMethodName().equals("waitClosed")));
             System.out.println("This exception has been caught, as expected:");
             e.printStackTrace(System.out);
-        }
-    }
-
-    private static class UncloseableInternalFrame extends JInternalFrame {
-        private boolean done = false;
-        public UncloseableInternalFrame(String title, boolean resizable, boolean closable, boolean maximizable, boolean iconifiable) {
-            super(title, resizable, closable, maximizable, iconifiable);
-        }
-
-        @Override
-        public void setClosed(boolean b) throws PropertyVetoException {
-            //unless done with the test, we do not want this frame to close ever
-            super.setClosed(done && b);
         }
     }
 }
