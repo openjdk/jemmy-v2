@@ -92,10 +92,6 @@ public class JInternalFrameOperatorCloseTest {
                     ste.getMethodName().equals("waitClosed")));
             System.out.println("This exception has been caught, as expected:");
             e.printStackTrace(System.out);
-        } finally {
-            // Really closing the frame this time
-            internalFrame.done = true;
-            internalFrameOper.close();
         }
     }
 
