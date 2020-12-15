@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2018, 2020, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -25,27 +25,34 @@
 
 package org.netbeans.jemmy.operators;
 
-import static org.testng.Assert.fail;
-
+import static java.util.Arrays.stream;
 import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
 import javax.swing.UIManager;
-import javax.swing.event.InternalFrameEvent;
-import javax.swing.event.InternalFrameListener;
 
 import org.netbeans.jemmy.JemmyProperties;
 import org.netbeans.jemmy.LookAndFeelProvider;
 import org.netbeans.jemmy.TimeoutExpiredException;
+
+import static org.netbeans.jemmy.drivers.DriverManager.WINDOW_DRIVER_ID;
+import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
+
+import org.netbeans.jemmy.drivers.DriverManager;
+import org.netbeans.jemmy.drivers.WindowDriver;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import java.beans.PropertyVetoException;
 
 public class JInternalFrameOperatorCloseTest {
 
     private JFrameOperator frameOper;
 
     private JInternalFrameOperator internalFrameOper;
+    private WindowDriver oldDriver;
 
     @BeforeMethod
     private void setUp(Object[] args) throws Exception {
@@ -64,6 +71,39 @@ public class JInternalFrameOperatorCloseTest {
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
         frameOper = new JFrameOperator();
+        //override windows driver for the operator to not do anything to close
+        oldDriver = DriverManager.getWindowDriver(JInternalFrameOperator.class);
+        DriverManager.setDriver(WINDOW_DRIVER_ID, new WindowDriver() {
+            @Override
+            public void activate(ComponentOperator oper) {
+                oldDriver.activate(oper);
+            }
+
+            @Override
+            public void requestClose(ComponentOperator oper) {
+                //do nothing here
+            }
+
+            @Override
+            public void requestCloseAndThenHide(ComponentOperator oper) {
+                //do nothing here
+            }
+
+            @Override
+            public void close(ComponentOperator oper) {
+                //do nothing here
+            }
+
+            @Override
+            public void move(ComponentOperator oper, int x, int y) {
+                oldDriver.move(oper, x, y);
+            }
+
+            @Override
+            public void resize(ComponentOperator oper, int width, int height) {
+                oldDriver.resize(oper, width, height);
+            }
+        }, JInternalFrameOperator.class);
         internalFrameOper = new JInternalFrameOperator(frameOper);
         internalFrameOper.setVerification(true);
     }
@@ -72,59 +112,25 @@ public class JInternalFrameOperatorCloseTest {
     protected void tearDown() throws Exception {
         frameOper.setVisible(false);
         frameOper.dispose();
+        DriverManager.setDriver(WINDOW_DRIVER_ID, oldDriver, JInternalFrameOperator.class);
     }
 
     @Test(dataProvider = "availableLookAndFeels", dataProviderClass = LookAndFeelProvider.class)
     public void testClose(String lookAndFeel) throws Exception {
-        InternalFrameListener listener = new InternalFrameListener() {
-
-            @Override
-            public void internalFrameOpened(InternalFrameEvent e) {
-            }
-
-            @Override
-            public void internalFrameIconified(InternalFrameEvent e) {
-            }
-
-            @Override
-            public void internalFrameDeiconified(InternalFrameEvent e) {
-            }
-
-            @Override
-            public void internalFrameDeactivated(InternalFrameEvent e) {
-            }
-
-            @Override
-            public void internalFrameClosing(InternalFrameEvent e) {
-                try {
-                    this.wait(80000);
-                } catch (InterruptedException e1) {
-                    e1.printStackTrace();
-                }
-            }
-
-            @Override
-            public void internalFrameClosed(InternalFrameEvent e) {
-            }
-
-            @Override
-            public void internalFrameActivated(InternalFrameEvent e) {
-            }
-        };
-
-        // Making not to close the fame for 1 minute and expecting TimeoutExpiredException
-        // from waitClosed()
         try {
-            internalFrameOper.addInternalFrameListener(listener);
+            //trying to close the uncloseable frame
+            //expected to fail by timeout, hence decreasing timeout
+            internalFrameOper.getTimeouts().setTimeout("ComponentOperator.WaitStateTimeout", 5000);
             internalFrameOper.close();
+            //that would mean that the exception is not thrown
             fail();
         } catch (TimeoutExpiredException e) {
-        } finally {
-            internalFrameOper.removeInternalFrameListener(listener);
+            //make sure the exception is coming from the right place
+            assertTrue(stream(e.getStackTrace()).anyMatch(ste ->
+                    ste.getClassName().equals(JInternalFrameOperator.class.getName()) &&
+                    ste.getMethodName().equals("waitClosed")));
+            System.out.println("This exception has been caught, as expected:");
+            e.printStackTrace(System.out);
         }
-
-        // Really closing the frame
-        internalFrameOper.close();
     }
-
 }

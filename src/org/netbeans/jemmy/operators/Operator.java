@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2018, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2020, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -734,14 +734,22 @@ public abstract class Operator
      * defined by {@code "ComponentOperator.WaitStateTimeout"}
      */
     public void waitStateOnQueue(final ComponentChooser state) {
-        waitState((comp) -> {
-            return (boolean) (queueTool.invokeSmoothly(
-                    new QueueTool.QueueAction<Object>("checkComponent") {
-                @Override
-                public final Object launch() throws Exception {
-                    return state.checkComponent(comp);
-                }
-            }));
+        waitState(new ComponentChooser() {
+            @Override
+            public boolean checkComponent(Component comp) {
+                return (boolean) (queueTool.invokeSmoothly(
+                        new QueueTool.QueueAction<Object>("checkComponent") {
+                            @Override
+                            public final Object launch() throws Exception {
+                                return state.checkComponent(comp);
+                            }
+                        }));
+            }
+
+            @Override
+            public String getDescription() {
+                return state.getDescription();
+            }
         });
     }
 
