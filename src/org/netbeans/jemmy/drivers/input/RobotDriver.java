@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2016, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2022, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -144,7 +144,7 @@ public class RobotDriver extends LightSupportiveDriver {
     }
 
     public void clickMouse(int x, int y, int clickCount, int mouseButton,
-            int modifiers, Timeout mouseClick) {
+                           int modifiers, Timeout mouseClick) {
         pressModifiers(modifiers);
         moveMouse(x, y);
         makeAnOperation("mousePress", new Object[]{mouseButton}, new Class<?>[]{Integer.TYPE});
@@ -161,7 +161,8 @@ public class RobotDriver extends LightSupportiveDriver {
         moveMouse(x, y);
     }
 
-    public void dragNDrop(int start_x, int start_y, int end_x, int end_y,
+    public void dragNDrop(
+            int start_x, int start_y, int end_x, int end_y,
             int mouseButton, int modifiers, Timeout before, Timeout after) {
         moveMouse(start_x, start_y);
         pressMouse(mouseButton, modifiers);

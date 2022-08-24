@@ -29,7 +29,7 @@ import org.netbeans.jemmy.operators.Operator;
 import java.awt.Point;
 import java.util.Arrays;
 
-public class UIStats {
+public class UIStatus {
     /**
      * Indentifier for mouse location dump property. The mouse location is saved on last mouse move performed with
      * this operator.

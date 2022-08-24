@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2016, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2022, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -88,28 +88,34 @@ public class MouseRobotDriver extends RobotDriver implements MouseDriver {
     @Override
     public void moveMouse(ComponentOperator oper, int x, int y) {
         moveMouse(getAbsoluteX(oper, x), getAbsoluteY(oper, y));
+        MouseDriver.mouseMoved(oper, x, y);
     }
 
     @Override
     public void clickMouse(ComponentOperator oper, int x, int y, int clickCount, int mouseButton,
             int modifiers, Timeout mouseClick) {
         clickMouse(getAbsoluteX(oper, x), getAbsoluteY(oper, y), clickCount, mouseButton, modifiers, mouseClick);
+        MouseDriver.mouseMoved(oper, x, y);
     }
 
     @Override
     public void dragMouse(ComponentOperator oper, int x, int y, int mouseButton, int modifiers) {
-        moveMouse(getAbsoluteX(oper, x), getAbsoluteY(oper, y));
+        moveMouse(oper, getAbsoluteX(oper, x), getAbsoluteY(oper, y));
+        MouseDriver.mouseMoved(oper, x, y);
     }
 
     @Override
     public void dragNDrop(ComponentOperator oper, int start_x, int start_y, int end_x, int end_y,
             int mouseButton, int modifiers, Timeout before, Timeout after) {
-        dragNDrop(getAbsoluteX(oper, start_x), getAbsoluteY(oper, start_y), getAbsoluteX(oper, end_x), getAbsoluteY(oper, end_y), mouseButton, modifiers, before, after);
+        dragNDrop(getAbsoluteX(oper, start_x), getAbsoluteY(oper, start_y), getAbsoluteX(oper, end_x),
+                getAbsoluteY(oper, end_y), mouseButton, modifiers, before, after);
+        MouseDriver.mouseMoved(oper, end_x, end_y);
     }
 
     @Override
     public void enterMouse(ComponentOperator oper) {
         moveMouse(oper, oper.getCenterXForClick(), oper.getCenterYForClick());
+        MouseDriver.mouseMoved(oper, oper.getCenterXForClick(), oper.getCenterYForClick());
     }
 
     @Override

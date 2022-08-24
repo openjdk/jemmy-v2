@@ -34,10 +34,12 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Hashtable;
+import java.util.Objects;
 
 import org.netbeans.jemmy.JemmyProperties;
 import org.netbeans.jemmy.QueueTool;
 import org.netbeans.jemmy.QueueTool.QueueAction;
+import org.netbeans.jemmy.UIStatus;
 import org.netbeans.jemmy.operators.Operator;
 
 /**
@@ -220,12 +222,31 @@ public class Dumper {
         writer.println("/>");
     }
 
+    private static void dumpCommon(PrintWriter writer, String tab) {
+        //dump common info
+        printTagStart(writer, "common", tab);
+        printEmptyTagOpening(writer, "property", tab + tabIncrease);
+        writer.print(" name=\""
+                + escape(UIStatus.LAST_MOUSE_MOVE_DPROP) + "\" value=\""
+                + escape(Objects.toString(UIStatus.lastMouseMove())) + "\"");
+        printEmptyTagClosing(writer, "property");
+        printEmptyTagOpening(writer, "property", tab + tabIncrease);
+        writer.print(" name=\""
+                + escape(UIStatus.LAST_MOUSE_MOVE_OPERATOR_DPROP) + "\" value=\""
+                + escape(Objects.toString(UIStatus.lastMouseMoveOperator())) + "\"");
+        printEmptyTagClosing(writer, "property");
+        printTagEnd(writer, "common", tab);
+    }
+
     private static void dumpSome(String tag, Component[] comps, PrintWriter writer, String tab, DumpController listener) {
-        if (comps.length > 0) {
+        if (comps.length > 0 || tag.equals("dump")) {
             printTagStart(writer, tag, tab);
-            for (Component comp : comps) {
-                dumpOne(comp, writer, tab + tabIncrease, listener);
-            }
+            if(tag.equals("dump"))
+                dumpCommon(writer, tab + tabIncrease);
+            if (comps.length > 0)
+                for (Component comp : comps) {
+                    dumpOne(comp, writer, tab + tabIncrease, listener);
+                }
             printTagEnd(writer, tag, tab);
         }
     }
@@ -284,6 +305,7 @@ public class Dumper {
 
     private static void printDTD(PrintWriter writer, String tab) {
         writer.println(tab + "<!ELEMENT dump (component*)>");
+        writer.println(tab + "<!ELEMENT common (property+)>");
         writer.println(tab + "<!ELEMENT component (property+, subcomponents?, subwindows?, exception?)>");
         writer.println(tab + "<!ELEMENT subcomponents (component+)>");
         writer.println(tab + "<!ELEMENT subwindows (component+)>");

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2016, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2022, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -31,6 +31,8 @@ import org.netbeans.jemmy.drivers.MouseDriver;
 import org.netbeans.jemmy.operators.ComponentOperator;
 import org.netbeans.jemmy.operators.Operator;
 
+import static org.netbeans.jemmy.drivers.MouseDriver.mouseMoved;
+
 /**
  * MouseDriver using event dispatching.
  *
@@ -60,6 +62,7 @@ public class MouseEventDriver extends EventDriver implements MouseDriver {
                 MouseEvent.MOUSE_PRESSED,
                 modifiers, x, y, 1,
                 mouseButton);
+        mouseMoved(oper, x, y);
     }
 
     @Override
@@ -68,6 +71,7 @@ public class MouseEventDriver extends EventDriver implements MouseDriver {
                 MouseEvent.MOUSE_RELEASED,
                 modifiers, x, y, 1,
                 mouseButton);
+        mouseMoved(oper, x, y);
     }
 
     @Override
@@ -76,6 +80,7 @@ public class MouseEventDriver extends EventDriver implements MouseDriver {
                 MouseEvent.MOUSE_MOVED,
                 0, x, y, 0,
                 Operator.getDefaultMouseButton());
+        mouseMoved(oper, x, y);
     }
 
     @Override
@@ -125,6 +130,7 @@ public class MouseEventDriver extends EventDriver implements MouseDriver {
                 MouseEvent.MOUSE_DRAGGED,
                 modifiers, x, y, 1,
                 mouseButton);
+        mouseMoved(oper, x, y);
     }
 
     @Override
@@ -155,6 +161,7 @@ public class MouseEventDriver extends EventDriver implements MouseDriver {
                 MouseEvent.MOUSE_ENTERED,
                 0, oper.getCenterX(), oper.getCenterY(), 0,
                 Operator.getDefaultMouseButton());
+        mouseMoved(oper, oper.getCenterX(), oper.getCenterY());
     }
 
     @Override

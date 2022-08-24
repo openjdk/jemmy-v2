@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2020, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2022, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -179,6 +179,13 @@ public class ComponentOperator extends Operator
      * @see #getDump
      */
     public static final String HEIGHT_DPROP = "Height";
+
+    /**
+     * Identifier for focus property.
+     *
+     * @see #getDump
+     */
+    public static final String HAS_FOCUS_DPROP = "Has focus";
 
     private static final long PUSH_KEY_TIMEOUT = 0;
     private static final long MOUSE_CLICK_TIMEOUT = 0;
@@ -1301,6 +1308,7 @@ public class ComponentOperator extends Operator
         result.put(Y_DPROP, Integer.toString(getSource().getY()));
         result.put(WIDTH_DPROP, Integer.toString(getSource().getWidth()));
         result.put(HEIGHT_DPROP, Integer.toString(getSource().getHeight()));
+        result.put(HAS_FOCUS_DPROP, Boolean.toString(getSource().hasFocus()));
         return result;
     }
 

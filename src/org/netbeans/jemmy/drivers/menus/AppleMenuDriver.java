@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2016, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2022, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -36,6 +36,7 @@ import org.netbeans.jemmy.Timeout;
 import org.netbeans.jemmy.TimeoutExpiredException;
 import org.netbeans.jemmy.drivers.DescriptablePathChooser;
 import org.netbeans.jemmy.drivers.MenuDriver;
+import org.netbeans.jemmy.drivers.MouseDriver;
 import org.netbeans.jemmy.drivers.PathChooser;
 import org.netbeans.jemmy.drivers.input.RobotDriver;
 import org.netbeans.jemmy.operators.ComponentOperator;
@@ -59,7 +60,7 @@ public class AppleMenuDriver extends RobotDriver implements MenuDriver {
     public Object pushMenu(ComponentOperator oper, PathChooser chooser) {
         Timeout maxTime = oper.getTimeouts().create("ComponentOperator.WaitComponentTimeout");
         JMenuBar bar = (JMenuBar) (oper.getSource());
-        activateMenu(bar);
+        activateMenu(oper, bar);
         MenuElement menuObject;
         maxTime.start();
         while (!chooser.checkPathComponent(0, (menuObject = getSelectedElement(bar)))) {
@@ -92,17 +93,18 @@ public class AppleMenuDriver extends RobotDriver implements MenuDriver {
         return menuObject;
     }
 
-    private void activateMenu(JMenuBar bar) {
+    private void activateMenu(Operator oper, JMenuBar bar) {
         if (getSelectedElement(bar) == null) {
-            tryToActivate();
+            tryToActivate(oper);
             if (getSelectedElement(bar) == null) {
-                tryToActivate();
+                tryToActivate(oper);
             }
         }
     }
 
-    private void tryToActivate() {
+    private void tryToActivate(Operator oper) {
         moveMouse(0, 0);
+        MouseDriver.mouseMoved(oper, 0, 0);
         pressMouse(Operator.getDefaultMouseButton(), 0);
         releaseMouse(Operator.getDefaultMouseButton(), 0);
         pressKey(KeyEvent.VK_RIGHT, 0);

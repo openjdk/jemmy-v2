@@ -25,12 +25,20 @@
 package org.netbeans.jemmy.drivers;
 
 import org.netbeans.jemmy.Timeout;
+import org.netbeans.jemmy.UIStatus;
 import org.netbeans.jemmy.operators.ComponentOperator;
+import org.netbeans.jemmy.operators.Operator;
+
+import java.awt.Point;
 
 /**
  * Defines how to simulate mouse operations.
  */
 public interface MouseDriver {
+
+    static void mouseMoved(Operator oper, int x, int y) {
+        UIStatus.mouseMoved(oper, new Point(x, y));
+    }
 
     /**
      * Presses mouse.

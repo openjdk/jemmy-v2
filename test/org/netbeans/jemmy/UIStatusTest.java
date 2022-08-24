@@ -34,6 +34,7 @@ import org.netbeans.jemmy.operators.JListOperator;
 import org.netbeans.jemmy.scenario.ComboBoxesAndListApp;
 import org.netbeans.jemmy.scenario.Util;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -43,7 +44,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import static org.testng.Assert.assertEquals;
 
-public class UIStatsTest {
+public class UIStatusTest {
     private static JFrameOperator fo;
 
     @BeforeClass
@@ -60,6 +61,7 @@ public class UIStatsTest {
 
     private void setDriver(Object driver) {
         DriverManager.setDriver(DriverManager.MOUSE_DRIVER_ID, (LightDriver) driver);
+        UIStatus.mouseMoved(null, null);
     }
 
     @Test(dataProvider = "mouseDrivers")
@@ -67,7 +69,7 @@ public class UIStatsTest {
         setDriver(driver);
         JComboBoxOperator combo = new JComboBoxOperator(fo);
         combo.clickMouse();
-        assertEquals(UIStats.lastMouseMove(), new Point(combo.getCenterXForClick(), combo.getCenterYForClick()));
+        assertEquals(UIStatus.lastMouseMove(), new Point(combo.getCenterXForClick(), combo.getCenterYForClick()));
     }
 
     @Test(dataProvider = "mouseDrivers")
@@ -75,7 +77,7 @@ public class UIStatsTest {
         setDriver(driver);
         JListOperator list = new JListOperator(fo);
         list.clickMouse();
-        assertEquals(UIStats.lastMouseMove(), new Point(list.getCenterXForClick(), list.getCenterYForClick()));
+        assertEquals(UIStatus.lastMouseMove(), new Point(list.getCenterXForClick(), list.getCenterYForClick()));
     }
 
     @Test(dataProvider = "mouseDrivers")
@@ -83,7 +85,7 @@ public class UIStatsTest {
         setDriver(driver);
         JComboBoxOperator combo = new JComboBoxOperator(fo, 1);
         combo.moveMouse(1, 1);
-        assertEquals(UIStats.lastMouseMove(), new Point(1, 1));
+        assertEquals(UIStatus.lastMouseMove(), new Point(1, 1));
     }
 
     @Test(dataProvider = "mouseDrivers")
@@ -91,7 +93,7 @@ public class UIStatsTest {
         setDriver(driver);
         JListOperator list = new JListOperator(fo);
         list.dragNDrop(10, 10, 20, 20);
-        assertEquals(UIStats.lastMouseMove(), new Point(20, 20));
+        assertEquals(UIStatus.lastMouseMove(), new Point(20, 20));
     }
 
 }
