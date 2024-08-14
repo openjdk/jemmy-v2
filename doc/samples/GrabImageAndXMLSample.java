@@ -14,7 +14,7 @@ public class GrabImageAndXMLSample implements Scenario {
             PNGEncoder.captureScreen(System.getProperty("user.dir") +
                                      System.getProperty("file.separator") +
                                      "screen.png");
-            
+
             //grab component state
             Dumper.dumpAll(System.getProperty("user.dir") +
                            System.getProperty("file.separator") +

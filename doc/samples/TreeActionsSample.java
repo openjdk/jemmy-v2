@@ -16,10 +16,10 @@ public class TreeActionsSample implements Scenario {
             //click in the middle of the tree
             tree.clickMouse();
 
-            //collapse node            
+            //collapse node
             tree.collapsePath(tree.findPath("", "|"));
 
-            //expand node            
+            //expand node
             tree.expandPath(tree.findPath("", "|"));
 
             //select node

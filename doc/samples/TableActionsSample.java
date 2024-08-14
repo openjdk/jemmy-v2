@@ -25,10 +25,10 @@ public class TableActionsSample implements Scenario {
 
             //find row
             int titleRow = table.findCellRow("GUI Browser");
-            
+
             //select cell containing window title
             table.selectCell(titleRow, 1);
-                        
+
             //change table text
             //table.changeCellObject(titleRow, 1, "That was window title :)");
 

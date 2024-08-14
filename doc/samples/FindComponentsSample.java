@@ -20,7 +20,7 @@ public class FindComponentsSample implements Scenario {
             //or by selected node:
             tree.selectPath(tree.findPath("GUI Browser", "|"));
             new JTreeOperator(mainFrame, "GUI Browser");
-            
+
             //and couple of text components:
             new JTextComponentOperator(mainFrame, "0");
             new JTextComponentOperator(mainFrame, "toString");

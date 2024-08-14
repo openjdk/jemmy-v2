@@ -14,14 +14,14 @@ public class ResourceSample implements Scenario {
             new ClassReference(bundle.getResource("guibrowser.main_class")).
                 startApplication();
 
-            JFrameOperator mainFrame = 
+            JFrameOperator mainFrame =
                 new JFrameOperator(bundle.getResource("guibrowser.main_window"));
 
             new JButtonOperator(mainFrame, bundle.getResource("guibrowser.reload_button")).push();
             new JLabelOperator(mainFrame, bundle.getResource("guibrowser.reloaded_label"));
-            
+
             new JTreeOperator(mainFrame).selectRow(1);
-            
+
             new JButtonOperator(mainFrame, bundle.getResource("show_window_hierarchy")).push();
 
             new JFrameOperator(1);

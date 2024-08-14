@@ -19,13 +19,13 @@ import org.netbeans.jemmy.operators.JTreeOperator;
 /*
  * Here is an example how Jemmy could be used for GUI application testing.
  * This examples tests some basic functionality of junit.swingui.TestRunner GUI.
- * 
+ *
  * Test uses MyTest which contains two tests: one of them passes, another one
  * fails.
  *
  * What it does is:
  * - testWrongTestName test:
- *   Types unexisting test, pushs "Run" name and checks that TestRunner shows 
+ *   Types unexisting test, pushs "Run" name and checks that TestRunner shows
  *   correct status.
  * - testMyTest test
  *   Runs MyTest test and checks footer and failed test list.
@@ -40,7 +40,7 @@ public class RunnerTest extends TestCase {
         super(name);
     }
     public void testWrongTestName() {
-        //find main window 
+        //find main window
         JFrameOperator mainWindow = new JFrameOperator("JUnit");
 
         //and text field
@@ -57,7 +57,7 @@ public class RunnerTest extends TestCase {
         new JTextFieldOperator(mainWindow, "Class not found \"wrong.test.name\"");
     }
     public void testMyTest() {
-        //find main window 
+        //find main window
         JFrameOperator mainWindow = new JFrameOperator("JUnit");
 
         //and text field
@@ -88,7 +88,7 @@ public class RunnerTest extends TestCase {
         JTreeOperator testTree = new JTreeOperator(mainWindow, "testFail", -1, 0);
     }
     public void testGoodSubTest() {
-        //find main window 
+        //find main window
         JFrameOperator mainWindow = new JFrameOperator("JUnit");
 
         //and tree
@@ -103,7 +103,7 @@ public class RunnerTest extends TestCase {
         new JTextFieldOperator(mainWindow, "testPass(MyTest) was successful");
     }
     public void testBadSubTest() {
-        //find main window 
+        //find main window
         JFrameOperator mainWindow = new JFrameOperator("JUnit");
 
         //and tree
@@ -126,7 +126,7 @@ public class RunnerTest extends TestCase {
 
             //increase timeouts values to see what's going on
             //otherwise everything's happened very fast
-            JemmyProperties.getCurrentTimeouts().loadDebugTimeouts();        
+            JemmyProperties.getCurrentTimeouts().loadDebugTimeouts();
         } catch(Exception e) {
             e.printStackTrace();
         }
