@@ -1,0 +1,6 @@
+guibrowser.main_class=org.netbeans.jemmy.explorer.GUIBrowser
+guibrowser.main_window=GUI Browser
+guibrowser.reload_button=Reload In ...
+guibrowser.reloaded_label=Reloaded
+guibrowser.show_window_hierarchy=View
+

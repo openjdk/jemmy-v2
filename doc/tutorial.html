@@ -1,0 +1,257 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+    <head>
+        <title>Quick Jemmy tutorial</title>
+        <!--link REL="Stylesheet" HREF="http://www.netbeans.org/netbeans.css" TYPE="text/css"-->
+    </head>
+    <body>
+        
+        <h1>Quick Jemmy tutorial</h1>
+        Table of Contents<br><br>
+        <a href="#compile">Compiling samples</a><br>
+        <a href="#execute">Sample execution</a><br>
+        <a href="#testcreation">Test class creation</a><br>
+        <a href="#appexecution">Application execution</a><br>
+        <a href="#winsearching">Window searching</a><br>
+        <a href="#compsearching">Component searching</a><br>
+        <a href="#compaccess">Access to swing component</a><br>
+        <a href="#compaction">Actions with component</a><br>
+        <a href="#nonblocking">Nonblocking actions</a><br>
+        <a href="#queue">Event queue using</a><br>
+        <a href="#exceptions">Jemmy exceptions</a><br>
+        <a href="#resources">String resources</a><br>
+        <a href="#timeouts">Timeouts</a><br>
+        <a href="#drvers">Drivers</a><br>
+        <a href="#robot">Robot vs event dispatching.</a><br>
+        <a href="#resourcefile">Timeouts and resources location.</a><br>
+
+        <hr>
+        <font size="+1">
+            <a NAME="compile">Compiling samples</a><br><br>
+        </font>
+        <code>javac -classpath &lt;jemmy classes or jar&gt; &lt;sample name&gt;.java</code>.<br>
+        <hr>
+        <font size="+1">
+            <a NAME="execute">Sample execution</a><br><br>
+        </font>
+        <code>java -classpath &lt;jemmy classes or jar&gt;:&lt;current directory&gt; &lt;sample name&gt</code><br>
+        <hr>
+        <font size="+1">
+            <a NAME="testcreation">Test class creation</a><br><br>
+        </font>
+        Jemmy does not provide or require a test harness. <br><br>
+        For the purpose of this tutorial purposes, <code>public int org.netbeans.jemmy.Test</code>
+        is used.<br><br>
+        Examples: 
+        <code><a href="samples/WaitWindowSample.java">WaitWindowSample.java</a>
+        or <a href="samples.html">any other sample</a></code><br><br>
+        
+        <hr>
+        <font size="+1">
+            <a NAME="appexecution">Application execution</a><br><br>
+        </font>
+        Jemmy test must be executed in the same JVM as the tested application. One way to do it is to run the
+        application's main method from test through reflection. <code>org.netbeans.jemmy.ClassReference</code>
+        makes it easier.<br><br>
+        Examples: 
+        <code><a href="samples/WaitWindowSample.java">WaitWindowSample.java</a></code>
+        or <code><a href="samples.html">any other sample</a></code><br><br>
+
+        <hr>
+        <font size="+1">
+            <a NAME="winsearching">Window searching</a><br><br>
+        </font>
+        A swing component first need to be found. A window needs to be found first.<br><br>
+        <font size="-1">
+            Note:<br>
+            Java UI application is an multi-thread application itself. The test thread is yet another thread.
+            Wait is performed while the components are looked up.
+            Check <code>org.netbeans.jemmy.ComponentChooser</code> and <code>org.netbeans.jemmy.WindowWaiter</code><br><br>
+        </font>
+        Frame or dialog title is one way to distinguish the required window from others.
+        Check <code>org.netbeans.jemmy.operators.JFrameOperator</code> and
+        <code>org.netbeans.jemmy.operators.JDialogOperator</code>
+        for more ways to find windows.<br><br>
+        <font size="-1">
+            Note:<br>
+            Jemmy provides many more searching capabilities than just be the title.
+        </font>
+        Examples: 
+        <code><a href="samples/WaitWindowSample.java">WaitWindowSample.java</a></code>, 
+        <code><a href="samples/WaitDialogSample.java">WaitDialogSample.java</a></code><br><br>
+        
+        <hr>
+        <font size="+1">
+            <a NAME="compsearching">Component searching</a><br><br>
+        </font>
+        Components are looked up inside a container.
+        <code>org.netbeans.jemmy.operators.ComponentOperator</code> and all its subclasses
+        (except operators for window-like components, like popups) have lookup constructors with
+        <code>org.netbeans.jemmy.operators.ContainerOperator</code> parameter.
+        The rest of the parameters differ from component to component. Most operators
+        have constructors with <code>java.lang.String</code> parameter which defines
+        a component string resource value.<br><br>
+        
+        Examples: <code><a href="samples/FindComponentsSample.java">FindComponentsSample.java</a></code><br><br>
+        <font size="-1">
+            <code>org.netbeans.jemmy.operator.Operator.StringComparator</code><br> sets how the strings are compared
+            during the lookup. See
+            <code>org.netbeans.jemmy.operator.Operator.setDefaultStringComparator(org.netbeans.jemmy.operator.Operator.StringComparator)</code><br>
+            and
+            <code>org.netbeans.jemmy.operator.Operator.setComparator(org.netbeans.jemmy.operator.Operator.StringComparator)</code><br><br>
+        </font>
+        
+        <hr>
+        <font size="+1">
+            <a NAME="compaccess">Access to swing component</a><br><br>
+        </font>
+        All methods of Swing/AWT components are mapped by corresponding operator. For example,
+        <code>AbstractButtonOperator.getText()</code>
+        maps <code>AbstractButton.getText()</code> by invoking it through the <a href="#queue">event queue</a>.<br><br>
+        <font size="-1">Note:<br>
+            Operator's mapping method cannot be used if the code
+            itself is executed inside the queue. Using an operator's mapping method
+            will result in a deadlock in this case.<br>
+        </font>
+        
+        <hr>
+        <font size="+1">
+            <a NAME="compaction">Actions with component</a><br><br>
+        </font>
+        <code>org.netbeans.jemmy.operators.ComponentOperator</code> contains all methods
+        simulating user input by mouse and keyboard operations. Other operators
+        contain most methods necessary to drive components.<br><br>
+        Examples: 
+        <code><a href="samples/ActionsSample.java">ActionsSample.java</a></code>, 
+        <code><a href="samples/TreeActionsSample.java">TreeActionsSample.java</a></code>, 
+        <code><a href="samples/TableActionsSample.java">TableActionsSample.java</a></code><br><br>
+        
+        <hr>
+        <font size="+1">
+            <a NAME="nonblocking">Nonblocking actions</a><br><br>
+        </font>
+        This section applies to non-robot mode only. Robot operations work
+        when either any modal dialogs are displayed or not.<br><br>
+        If a modal dialog is shown as a result of an action (such as button
+        pushing), the push method will never exit causing the execution to
+        be blocked. One of the nonblocking methods have to be used:<br>
+        <code>org.netbeans.jemmy.operators.AbstractButtonOperator.pushNoBlock()</code><br>
+        <code>org.netbeans.jemmy.operators.AbstractButtonOperator.changeSelectionNoBlock(boolean)</code><br>
+        <code>org.netbeans.jemmy.operators.JMenuBarOperator.pushMenuNoBlock(ComponentChooser[])</code><br>
+        <code>org.netbeans.jemmy.operators.JMenuBarOperator.pushMenuNoBlock(String[])</code><br>
+        <code>org.netbeans.jemmy.operators.JMenuBarOperator.pushMenuNoBlock(String path, String delim)</code><br>
+        <code>org.netbeans.jemmy.operators.JMenuOperator.pushMenuNoBlock(ComponentChooser[])</code><br>
+        <code>org.netbeans.jemmy.operators.JMenuOperator.pushMenuNoBlock(String[])</code><br>
+        <code>org.netbeans.jemmy.operators.JMenuOperator.pushMenuNoBlock(String, String)</code><br>
+        <code>org.netbeans.jemmy.operators.JPopupMenuOperator.pushMenuNoBlock(ComponentChooser[])</code><br>
+        <code>org.netbeans.jemmy.operators.JPopupMenuOperator.pushMenuNoBlock(String[])</code><br>
+        <code>org.netbeans.jemmy.operators.JPopupMenuOperator.pushMenuNoBlock(String, String)</code><br><br>
+        
+        Examples: 
+        <code><a href="samples/WaitDialogSample.java">WaitDialogSample.java</a></code>,
+        
+        <hr>
+        <font size="+1">
+            <a NAME="queue">Using the Event queue</a><br><br>
+        </font>
+        Event queue can be
+        used for test stabilization purposes. Read <a href="queue.html">"EventQueue using"</a>
+        for more information.<br><br>
+        Example: <code><a href="samples/QueueUsingSample.java">QueueUsingSample.java</a></code><br><br>
+
+        <hr>
+        <font size="+1">
+            <a NAME="exceptions">Jemmy exceptions</a><br><br>
+        </font>
+        Any unsuccessful operation in Jemmy exits with an exception. All exception
+        classes extend <code>org.netbeans.jemmy.JemmyException</code>.<br><br>
+
+        <hr>
+        <font size="+1">
+            <a NAME="resources">String resources</a><br><br>
+        </font>
+        String resources like button text, window titles, tree paths, ... could
+        be moved into special resource files.<br><br>
+        Examples:<br>
+        <code><a href="samples/ResourceSample.java">ResourceSample.java</a></code>, 
+        <code><a href="samples/resourcesample.txt">resourcesample.txt</a></code><br><br>
+        
+        Also see from a file by using the <code>org.netbeans.jemmy.Bundle</code>,
+        <code>org.netbeans.jemmy.BundleManager</code>.<br><br>
+
+        <hr>
+        <font size="+1">
+            <a name="drvers">Drivers</a><br><br>
+        </font>
+        Actual implementation uf thr input simulation is implemented in so called "drivers".
+        (<code>org.netbeans.jemmy.drivers</code> package).<br><br>
+        For example, button pushing is implemented by a <code>ButtonDriver</code> implementation,
+        which has <code>press</code>, <code>release</code> and <code>push</code> methods.
+        The implementation could do pushing using mouse, keyboard, or just invoke 
+        AbstractButton.doClick() method.<br><br>
+
+        Drivers are registered with Jemmy by <code>DriverManager</code>.<br><br>
+
+        <hr>
+        <font size="+1">
+            <a NAME="timeouts">Timeouts</a><br><br>
+        </font>
+        Jemmy specifies various timeouts to define maximum wait times and values for delay between various actions.
+        Timeouts used by a class are usually described in javadoc for the class. Increasing timeout values, generally
+        speaking, makes tests more reliable. With the larger timeouts, tests take longer to fail.<br><br>
+        <font size="-1">
+            Note:<br>
+            If waiting was not finished successfully in an appropriate
+            time, <code>org.netbeans.jemmy.TimeoutExpiredException</code> will be thrown.<br><br>
+        </font>
+        Examples of timeouts:<br>
+        ComponentOperator.PushKeyTimeout - time to sleep between key pressing and releasing.<br>
+        Waiter.TimeDelta - default time to sleep between attempts.<br>
+        WindowWaiter.WaitWindowTimeout - maximum time to wait window.<br>
+        JTreeOperator.WaitNodeExpandedTimeout - maximum time to wait next node
+        loaded during tree operations<br><br>
+        Timeouts values can be stored in file in properties format:<br>
+        <pre>
+Waiter.TimeDelta=1
+WindowWaiter.WaitWindowTimeout=180000
+        </pre>
+        See <code>org.netbeans.jemmy.Timeouts.load(String)</code>.<br><br>
+        
+        <hr>
+        <font size="+1">
+            <a NAME="robot">Robot vs event dispatching</a><br><br>
+        </font>
+        Jemmy test can be executed using <code>java.awt.Robot</code>, as well as without. In the second
+        case, Jemmy dispatches events directly to components.<br>
+        Robot mode is more "honest" approach. If something cannot be done
+        manually, it cannot be done automatically. This gives a certainty that the
+        only tests that passed are the ones that can be reproduced manually. And
+        there is no such thing as, what cannot be done by robot mode can only be
+        done manually.<br>
+        "Dispatching" mode works even if application window is covered by another window.
+        It can work on locked display (depends on operating
+        system and window manager). It is also a little faster. Finally, it is way more stable.
+        See <a href="queue.html">more onn this.</a>
+        <br>
+        "Dispatching" mode is used by default. Robot mode can be turned on like this:<br>
+        <code>JemmyProperties.setCurrentDispatchingMode(JemmyProperties.ROBOT_MODEL_MASK)</code><br>
+        Or from command line:<br>
+        <code>java ... -Djemmy.robot_dispatching=on ...</code><br><br>
+        
+        <hr>
+        <font size="+1">
+            <a NAME="resourcefile">Timeouts and resources location.</a><br><br>
+        </font>
+        Jemmy recognize one more option from command line: <code>jemmy.properties</code>.
+        Value of this option must be file name containing two (or just one of them)
+        strings:<br>
+        <pre>
+TIMEOUTS_FILE=[file containing timeouts]
+RESOURCE_FILE=[file containing string resources]
+        </pre>
+        These string defines files to load <a href="#timeouts">timeouts</a>
+        and <a href="#resources">string resources</a> resources from.<br><br>
+        
+        <hr>
+    </body>
+</html>

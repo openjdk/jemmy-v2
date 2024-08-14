@@ -1,0 +1,53 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <title>Jemmy Module - Samples</title>
+    <!--link REL="Stylesheet" HREF="http://www.netbeans.org/netbeans.css" TYPE="text/css"-->
+  </head>
+  <body>
+
+    <h1>
+      Jemmy Module - Samples</h1>
+    To run any sample you should <a href="https://jemmy.dev.java.net/servlets/ProjectDocumentList">download</a>
+    Jemmy first. 
+    <h2>Samples using GUIBrowser application</h2>
+    Run commands:
+    <br><tt>javac -classpath "jemmy_classes_location" "sample_name".java</tt> and
+    <br><tt>java -classpath "jemmy_classes_location" "sample_name"</tt><br><br>
+    All samples use the GUI browser application as an example of an application to be tested.<br>
+    <br>If it's unclear what the sample does, you can run the application:
+    <br><tt>java -classpath jemmy_classes_location org.netbeans.jemmy.explorer.GUIBrowser</tt>
+    <br>and repeat the test manually.<br><br>
+    <tt><a href="samples/WaitWindowSample.java">WaitWindowSample.java</a></tt> -
+    How to find a frame.<br><br>
+    <tt><a href="samples/WaitDialogSample.java">WaitDialogSample.java</a></tt> -
+    How to find a dialog.<br><br>
+    <tt><a href="samples/FindComponentsSample.java">FindComponentsSample.java</a></tt> -
+    How to find components.<br><br>
+    <tt><a href="samples/ActionsSample.java">ActionsSample.java</a></tt> -
+    Shows some actions.<br><br>
+    <tt><a href="samples/ResourceSample.java">ResourceSample.java</a>,
+      <a href="samples/resourcesample.txt">resourcesample.txt</a></tt> -
+    The way to keep string resources.<br><br>
+    <tt><a href="samples/TableActionsSample.java">TableActionsSample.java</a></tt> -
+    Some examples show how to use JTableOperator.<br><br>
+    <tt><a href="samples/TreeActionsSample.java">TreeActionsSample.java</a></tt> -
+    Some examples show how to use JTreeOperator.<br><br>
+    <tt><a href="samples/QueueUsingSample.java">QueueUsingSample.java</a></tt> -
+    Simple example shows how to treat the event queue from a test.<br><br>
+    <tt><a href="samples/ModalDialogSample.java">ModalDialogSample.java</a></tt> -
+    What nonblocking methods are used for.<br><br>
+    <tt><a href="samples/GrabImageAndXMLSample.java">GrabImageAndXMLSample.java</a></tt> -
+    Tools to help find the cause of a failure.<br>
+    <!--h2>Sample in JUnit format</h2>
+    <a href="samples/RunnerTest.java">RunnerTest</a> test actually tests <code>junit.swingui.TestRunner</code>
+    class checking how it treats <a href="samples/MyTest.java">MyTest</a><br><br>
+    To run :<br>
+    1. Download junit.<br>
+    2. Download jemmy.<br>
+    3. Add junit.jar and jemmy.jar to classpath.<br>
+    4. Compile MyTest.java and RunnerTest.java<br>
+    5. Run <code>java junit.textui.TestRunner RunnerTest</code>.<br-->
+  </body>
+</html>
