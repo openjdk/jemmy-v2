@@ -5,21 +5,21 @@ import junit.framework.TestSuite;
 
 public class MyTest extends TestCase {
     public MyTest(String name) {
-	super(name);
+        super(name);
     }
     public void testPass() {
-	System.out.println("Test supposed to be passed");
+        System.out.println("Test supposed to be passed");
     }
     public void testFail() {
-	System.out.println("Test supposed to be failed");
-	fail();
+        System.out.println("Test supposed to be failed");
+        fail();
     }
     /*
     public static TestSuite suite() {
-	TestSuite suite = new TestSuite();
-	suite.addTest(new MyTest("testPass"));
-	suite.addTest(new MyTest("testFail"));
-	return(suite);
+        TestSuite suite = new TestSuite();
+        suite.addTest(new MyTest("testPass"));
+        suite.addTest(new MyTest("testFail"));
+        return(suite);
     }
     */
 }

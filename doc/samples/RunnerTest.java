@@ -37,106 +37,106 @@ import org.netbeans.jemmy.operators.JTreeOperator;
  */
 public class RunnerTest extends TestCase {
     public RunnerTest(String name) {
-	super(name);
+        super(name);
     }
     public void testWrongTestName() {
-	//find main window 
-	JFrameOperator mainWindow = new JFrameOperator("JUnit");
+        //find main window 
+        JFrameOperator mainWindow = new JFrameOperator("JUnit");
 
-	//and text field
-	JTextFieldOperator testNameField = new JTextFieldOperator(mainWindow);
+        //and text field
+        JTextFieldOperator testNameField = new JTextFieldOperator(mainWindow);
 
-	//type unexisting test name
-	testNameField.clearText();
-	testNameField.typeText("wrong.test.name");
+        //type unexisting test name
+        testNameField.clearText();
+        testNameField.typeText("wrong.test.name");
 
-	//push "Run" button
-	new JButtonOperator(mainWindow, "Run").pushNoBlock();
+        //push "Run" button
+        new JButtonOperator(mainWindow, "Run").pushNoBlock();
 
-	//check footer
-	new JTextFieldOperator(mainWindow, "Class not found \"wrong.test.name\"");
+        //check footer
+        new JTextFieldOperator(mainWindow, "Class not found \"wrong.test.name\"");
     }
     public void testMyTest() {
-	//find main window 
-	JFrameOperator mainWindow = new JFrameOperator("JUnit");
+        //find main window 
+        JFrameOperator mainWindow = new JFrameOperator("JUnit");
 
-	//and text field
-	JTextFieldOperator testNameField = new JTextFieldOperator(mainWindow);
+        //and text field
+        JTextFieldOperator testNameField = new JTextFieldOperator(mainWindow);
 
-	//type a test name
-	//MyTest class has two methods
-	testNameField.clearText();
-	testNameField.typeText("MyTest");
+        //type a test name
+        //MyTest class has two methods
+        testNameField.clearText();
+        testNameField.typeText("MyTest");
 
-	//push "Run" button.
-	new JButtonOperator(mainWindow, "Run").push();
+        //push "Run" button.
+        new JButtonOperator(mainWindow, "Run").push();
 
-	//synchronization.
-	//we just know that we will see both "2/2" and
-	//"Finished" labels (those label are really textfields)
-	new JTextFieldOperator(mainWindow, "Finished:");
-	new JTextFieldOperator(mainWindow, "2/2");
+        //synchronization.
+        //we just know that we will see both "2/2" and
+        //"Finished" labels (those label are really textfields)
+        new JTextFieldOperator(mainWindow, "Finished:");
+        new JTextFieldOperator(mainWindow, "2/2");
 
-	//check that list contains "testFail(MyTest)"
-	new JListOperator(mainWindow, "testFail(MyTest)");
+        //check that list contains "testFail(MyTest)"
+        new JListOperator(mainWindow, "testFail(MyTest)");
 
-	//switch to hierarchy page
-	JTabbedPaneOperator resultTab = new JTabbedPaneOperator(mainWindow);
-	resultTab.selectPage("Test Hierarchy");
+        //switch to hierarchy page
+        JTabbedPaneOperator resultTab = new JTabbedPaneOperator(mainWindow);
+        resultTab.selectPage("Test Hierarchy");
 
-	//check that right (failed) node is selected
-	JTreeOperator testTree = new JTreeOperator(mainWindow, "testFail", -1, 0);
+        //check that right (failed) node is selected
+        JTreeOperator testTree = new JTreeOperator(mainWindow, "testFail", -1, 0);
     }
     public void testGoodSubTest() {
-	//find main window 
-	JFrameOperator mainWindow = new JFrameOperator("JUnit");
+        //find main window 
+        JFrameOperator mainWindow = new JFrameOperator("JUnit");
 
-	//and tree
-	JTreeOperator testTree = new JTreeOperator(mainWindow);
+        //and tree
+        JTreeOperator testTree = new JTreeOperator(mainWindow);
 
-	//select failed test and run it again
-	TreePath failTest = testTree.findPath("testPass", "|");
-	testTree.selectPath(failTest);
-	new JButtonOperator(mainWindow, "Run", 1).push();
+        //select failed test and run it again
+        TreePath failTest = testTree.findPath("testPass", "|");
+        testTree.selectPath(failTest);
+        new JButtonOperator(mainWindow, "Run", 1).push();
 
-	//check footer
-	new JTextFieldOperator(mainWindow, "testPass(MyTest) was successful");
+        //check footer
+        new JTextFieldOperator(mainWindow, "testPass(MyTest) was successful");
     }
     public void testBadSubTest() {
-	//find main window 
-	JFrameOperator mainWindow = new JFrameOperator("JUnit");
+        //find main window 
+        JFrameOperator mainWindow = new JFrameOperator("JUnit");
 
-	//and tree
-	JTreeOperator testTree = new JTreeOperator(mainWindow);
+        //and tree
+        JTreeOperator testTree = new JTreeOperator(mainWindow);
 
-	//select passed test and run it again
-	TreePath failTest = testTree.findPath("testFail", "|");
-	testTree.selectPath(failTest);
-	new JButtonOperator(mainWindow, "Run", 1).push();
+        //select passed test and run it again
+        TreePath failTest = testTree.findPath("testFail", "|");
+        testTree.selectPath(failTest);
+        new JButtonOperator(mainWindow, "Run", 1).push();
 
-	//check footer
-	new JTextFieldOperator(mainWindow, "testFail(MyTest) had a failure");
+        //check footer
+        new JTextFieldOperator(mainWindow, "testFail(MyTest) had a failure");
     }
     public static Test suite() {
-	//start the application first
-	//ClassReference uses reflection so we don't need
-	//to really import application classes
-	try {
-	    new ClassReference("junit.swingui.TestRunner").startApplication();
+        //start the application first
+        //ClassReference uses reflection so we don't need
+        //to really import application classes
+        try {
+            new ClassReference("junit.swingui.TestRunner").startApplication();
 
             //increase timeouts values to see what's going on
             //otherwise everything's happened very fast
-            JemmyProperties.getCurrentTimeouts().loadDebugTimeouts();	
-	} catch(Exception e) {
-	    e.printStackTrace();
-	}
+            JemmyProperties.getCurrentTimeouts().loadDebugTimeouts();        
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
 
-	//create suite
-	TestSuite suite = new TestSuite();
-	suite.addTest(new RunnerTest("testWrongTestName"));
-	suite.addTest(new RunnerTest("testMyTest"));
-	suite.addTest(new RunnerTest("testGoodSubTest"));
-	suite.addTest(new RunnerTest("testBadSubTest"));
-	return(suite);
+        //create suite
+        TestSuite suite = new TestSuite();
+        suite.addTest(new RunnerTest("testWrongTestName"));
+        suite.addTest(new RunnerTest("testMyTest"));
+        suite.addTest(new RunnerTest("testGoodSubTest"));
+        suite.addTest(new RunnerTest("testBadSubTest"));
+        return(suite);
     }
 }
